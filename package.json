@@ -1,0 +1,29 @@
+{
+  "name": "2800_202610_bby17",
+  "version": "1.0.0",
+  "description": "Team Name: BBY-17\r Team Members: \r - Sal Yunus\r - Abdullah Munawar\r - Hezekiah Horfilla\r - Marcus Leung\r - Minh Ngoc Ngo",
+  "main": "mongoDBConnection.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panzer0tti/2800-202610-BBY17.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/panzer0tti/2800-202610-BBY17/issues"
+  },
+  "homepage": "https://github.com/panzer0tti/2800-202610-BBY17#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongodb": "^7.2.0",
+    "node.js": "^0.0.1-security"
+  }
+}

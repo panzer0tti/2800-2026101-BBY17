@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlantMap</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { height: 100dvh; display: flex; flex-direction: column; }
+
+  nav { padding: 8px 12px; border-bottom: 1px solid #ccc; display: flex; gap: 12px; align-items: center; }
+  nav strong { margin-right: auto; }
+  nav a { text-decoration: none; color: #333; font-size: 0.9rem; }
+
+  #map { flex: 1; }
+
+  .bottom-panel {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 10px;
+    pointer-events: none;
+    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+    z-index: 900;
+  }
+  .bottom-panel button { pointer-events: all; cursor: pointer; }
+  #locate-btn { padding: 6px 10px; }
+  #view-nearby-btn { width: 100%; padding: 10px; font-size: 1rem; }
+
+  /* Drawer */
+  #drawer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 950;
+    background: #fff;
+    border-top: 1px solid #ccc;
+    max-height: 60dvh;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  #drawer.open { transform: translateY(0); }
+  #drawer-header { padding: 10px 12px; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; }
+  #plant-list { overflow-y: auto; }
+  .plant-item { padding: 10px 12px; border-bottom: 1px solid #eee; cursor: pointer; }
+  .plant-item:hover { background: #f5f5f5; }
+  .plant-item.out-of-season { color: #999; }
+
+  /* Scan overlay */
+  #scan-overlay {
+    position: absolute; inset: 0;
+    z-index: 960;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    display: none;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    text-align: center;
+  }
+  #scan-overlay.open { display: flex; }
+</style>
+</head>
+<body>
+
+<nav>
+  <strong>PlantMap</strong>
+  <a href="#">Home</a>
+  <a href="#" id="nav-scan">Scan Plant</a>
+  <a href="#">Berry Guess</a>
+</nav>
+
+<div id="map"></div>
+<p id="plant-count" style="position:absolute;top:52px;right:8px;z-index:500;background:#fff;padding:4px 8px;border:1px solid #ccc;font-size:0.8rem;"></p>
+
+<div class="bottom-panel">
+  <button id="locate-btn">📍 My Location</button>
+  <button id="view-nearby-btn">View Plants Nearby</button>
+</div>
+
+<!-- Nearby Drawer -->
+<div id="drawer">
+  <div id="drawer-header">
+    <strong>Nearby Plants</strong>
+    <button id="drawer-close">✕</button>
+  </div>
+  <div id="plant-list"></div>
+</div>
+
+<!-- Scan Overlay -->
+<div id="scan-overlay">
+  <p>🌿</p>
+  <p>Point camera at a plant</p>
+  <button id="scan-close">Cancel</button>
+</div>
+
+<script>
+const PLANTS = [
+  { id:1, name:"Stinging Nettle",   sci:"Urtica dioica",        emoji:"🌿", lat:null, lng:null, season:true,  edible:true,  rare:false, dist:"0.2 km", tags:["In Season","Edible"] },
+  { id:2, name:"Wild Blackberry",   sci:"Rubus allegheniensis", emoji:"🫐", lat:null, lng:null, season:true,  edible:true,  rare:false, dist:"0.6 km", tags:["In Season","Edible"] },
+  { id:3, name:"Bracken Fern",      sci:"Pteridium aquilinum",  emoji:"🌱", lat:null, lng:null, season:false, edible:false, rare:false, dist:"0.8 km", tags:["Out of Season"] },
+  { id:4, name:"Garlic Mustard",    sci:"Alliaria petiolata",   emoji:"🌼", lat:null, lng:null, season:true,  edible:true,  rare:false, dist:"1.1 km", tags:["In Season","Edible"] },
+  { id:5, name:"Trillium",          sci:"Trillium ovatum",      emoji:"🌸", lat:null, lng:null, season:true,  edible:false, rare:true,  dist:"1.4 km", tags:["In Season","Rare"] },
+  { id:6, name:"Sword Fern",        sci:"Polystichum munitum",  emoji:"🌿", lat:null, lng:null, season:true,  edible:false, rare:false, dist:"0.3 km", tags:["In Season"] },
+  { id:7, name:"Cow Parsnip",       sci:"Heracleum maximum",    emoji:"🌾", lat:null, lng:null, season:false, edible:false, rare:false, dist:"1.9 km", tags:["Out of Season"] },
+];
+
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors', maxZoom: 19,
+}).addTo(map);
+
+let userCenter = [49.2827, -123.1207];
+map.setView(userCenter, 14);
+
+function locateUser() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    userCenter = [pos.coords.latitude, pos.coords.longitude];
+    map.setView(userCenter, 15);
+    seedPlants(...userCenter);
+  }, () => seedPlants(...userCenter));
+}
+
+function seedPlants(lat, lng) {
+  PLANTS.forEach((plant, i) => {
+    const angle = (i / PLANTS.length) * 2 * Math.PI + Math.random() * 0.5;
+    const r = 0.004 + Math.random() * 0.010;
+    plant.lat = lat + Math.cos(angle) * r;
+    plant.lng = lng + Math.sin(angle) * r * 1.4;
+    addMarker(plant);
+  });
+  renderList();
+  document.getElementById('plant-count').textContent = PLANTS.length + ' plants nearby';
+}
+
+function addMarker(plant) {
+  const popup = `
+    <b>${plant.emoji} ${plant.name}</b><br>
+    <i>${plant.sci}</i><br>
+    ${plant.tags.join(' · ')}<br>
+    📍 ${plant.dist}<br>
+    <button onclick="viewPlant(${plant.id})">View Info</button>`;
+  L.marker([plant.lat, plant.lng]).addTo(map).bindPopup(popup);
+}
+
+function renderList() {
+  document.getElementById('plant-list').innerHTML = PLANTS.map(p => `
+    <div class="plant-item ${p.season ? '' : 'out-of-season'}" onclick="flyTo(${p.id})">
+      ${p.emoji} <b>${p.name}</b> — ${p.tags[0]} · ${p.dist}
+    </div>`).join('');
+}
+
+function flyTo(id) {
+  const p = PLANTS.find(x => x.id === id);
+  if (!p?.lat) return;
+  closeDrawer();
+  map.flyTo([p.lat, p.lng], 16, { duration: 1.2 });
+}
+
+window.viewPlant = (id) => {
+  const p = PLANTS.find(x => x.id === id);
+  alert(`${p.name} (${p.sci})\nWould navigate to /plant/${id}`);
+};
+
+const drawer = document.getElementById('drawer');
+document.getElementById('view-nearby-btn').addEventListener('click', () => drawer.classList.add('open'));
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+function closeDrawer() { drawer.classList.remove('open'); }
+
+document.getElementById('locate-btn').addEventListener('click', locateUser);
+
+document.getElementById('nav-scan').addEventListener('click', e => {
+  e.preventDefault();
+  document.getElementById('scan-overlay').classList.add('open');
+});
+document.getElementById('scan-close').addEventListener('click', () => {
+  document.getElementById('scan-overlay').classList.remove('open');
+});
+
+seedPlants(...userCenter);
+locateUser();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BeWilder | Home</title>
+    <link rel="stylesheet" href="../../public/css/style.css" />
+    <script src="../../public/js/home.js" defer></script>
+  </head>
+  <body data-page="home">
+    <header>
+      <nav class="nav" aria-label="Main navigation">
+        <a
+          class="brand tooltip-target"
+          href="home.html"
+          data-tooltip="Return to the BeWilder home page."
+          >BeWilder</a
+        >
+        <button
+          class="menu-button tooltip-target"
+          type="button"
+          aria-label="Open menu"
+          data-tooltip="Open the navigation menu on smaller screens."
+        >
+          ☰
+        </button>
+        <ul class="nav-links">
+          <li><a class="active" href="home.html">Home</a></li>
+          <li>
+            <a
+              class="tooltip-target"
+              href="scan.html"
+              data-tooltip="Start here to scan, upload, or simulate a plant result."
+              >Scan Plant</a
+            >
+          </li>
+          <li>
+            <a
+              class="tooltip-target"
+              href="plant-map.html"
+              data-tooltip="View plant locations and nearby discoveries."
+              >Map</a
+            >
+          </li>
+          <li>
+            <a
+              class="tooltip-target"
+              href="my-plants.html"
+              data-tooltip="Review your successful saved plant scans."
+              >My Plants</a
+            >
+          </li>
+          <li>
+            <a
+              class="tooltip-target"
+              href="encyclopedia.html"
+              data-tooltip="Browse all known plants in BeWilder."
+              >Encyclopedia</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">Explore safely, learn confidently</p>
+          <h1>Discover plants around you with BeWilder.</h1>
+          <p>
+            BeWilder is a safety-first plant discovery web app that combines
+            plant scanning, a personal plant collection, a plant encyclopedia,
+            seasonal map exploration, and interactive gameplay.
+          </p>
+          <div class="actions">
+            <a
+              class="button primary tooltip-target"
+              href="scan.html"
+              data-tooltip="Begin the main BeWilder scan flow."
+              >Start a scan</a
+            >
+            <a
+              class="button secondary tooltip-target"
+              href="my-plants.html"
+              data-tooltip="View your saved successful scans."
+              >View My Plants</a
+            >
+          </div>
+        </div>
+        <aside
+          class="hero-card tooltip-target"
+          data-tooltip="This shows the main prototype user journey."
+        >
+          <h2>Prototype flow</h2>
+          <ol>
+            <li>Scan, upload, or simulate a plant scan</li>
+            <li>Review a possible plant match</li>
+            <li>Read confidence and risk guidance</li>
+            <li>Save successful scans to My Plants</li>
+            <li>Explore plants through maps and games</li>
+          </ol>
+        </aside>
+      </section>
+
+      <section class="onboarding-panel">
+        <div>
+          <h2>First-Time Mode</h2>
+          <p>
+            Turn this on to show short tooltips and walkthrough reminders for
+            new users.
+          </p>
+        </div>
+        <label class="switch">
+          <input id="first-time-toggle" type="checkbox" />
+          <span class="slider"></span>
+          <span class="switch-label">Show guidance</span>
+        </label>
+      </section>
+
+      <section class="section">
+        <h2>What BeWilder does</h2>
+        <div class="feature-grid">
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="This supports users who are not ready to use a real camera scan."
+          >
+            <h3>Scan plants</h3>
+            <p>
+              Scan, upload, or simulate an unknown plant result during the
+              prototype demo.
+            </p>
+          </article>
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="Safety guidance helps users avoid overtrusting a match."
+          >
+            <h3>Understand results</h3>
+            <p>
+              View possible matches with confidence scores, risk guidance, and
+              clear safety reminders.
+            </p>
+          </article>
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="Successful scans become part of the user's collection."
+          >
+            <h3>Build a collection</h3>
+            <p>
+              Save successful plant scans to a personal collection that works
+              like a plant discovery log.
+            </p>
+          </article>
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="The encyclopedia is for browsing all known plants."
+          >
+            <h3>Browse an encyclopedia</h3>
+            <p>
+              Explore known plants, learn basic facts, and compare them with
+              scan results.
+            </p>
+          </article>
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="The map helps users explore verified seasonal sightings."
+          >
+            <h3>Explore the map</h3>
+            <p>
+              View verified seasonal plant sightings on a public map for outdoor
+              exploration.
+            </p>
+          </article>
+          <article
+            class="feature-card tooltip-target"
+            data-tooltip="Game features make learning more interactive."
+          >
+            <h3>Learn through gameplay</h3>
+            <p>
+              Use plant quizzes, levels, and leaderboards to make plant learning
+              more engaging.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="safety-box tooltip-target"
+        data-tooltip="This warning is important because plant identification can affect user safety."
+      >
+        <h2>Safety reminder</h2>
+        <p>
+          BeWilder is a learning and exploration tool. Users should not eat or
+          handle unknown plants based only on an app result.
+        </p>
+      </section>
+    </main>
+
+    <footer><p>BeWilder prototype</p></footer>
+
+    <div class="modal-backdrop" id="tour-modal" hidden>
+      <section
+        class="tour-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tour-title"
+      >
+        <p class="eyebrow">Welcome</p>
+        <h2 id="tour-title">New to BeWilder?</h2>
+        <p id="tour-message">
+          BeWilder guides users from scanning a plant to saving it in My Plants.
+          Turn on First-Time Mode to see short tips while using the prototype.
+        </p>
+        <div class="modal-actions">
+          <button class="button secondary" id="skip-tour">Skip</button>
+          <button class="button primary" id="start-tour">Turn on tips</button>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

@@ -24,13 +24,19 @@ async function signupSubmit(req, res) {
 
     const validationResult = schema.validate({name, email, password});
     if (validationResult.error != null) {
-        res.send(`Error: ${validationResult.error.message}. <a href='/signup'>Try again</a>`);
+        res.render("errorMessage", {
+            message: validationResult.error.message,
+            link: "/signup"
+        });
         return;
     }
 
     const existingUser = await userCollection.findOne({email: email});
     if (existingUser) {
-        res.send(`Email is already in use. <a href='/signup'>Try again</a>`);
+        res.render("errorMessage", {
+            message: "Email is already in use.",
+            link: "/signup"
+        });
         return;
     }
 
@@ -50,8 +56,12 @@ async function loginSubmit(req, res) {
 
     const schema = Joi.string().email().required();
     const validationResult = schema.validate(email);
+
     if (validationResult.error != null) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        res.render("errorMessage", {
+            message: "Invalid email format.",
+            link: "/login"
+        });
         return;
     }
 
@@ -60,7 +70,10 @@ async function loginSubmit(req, res) {
                                        .toArray();
 
     if (result.length == 0) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        res.render("errorMessage", {
+            message: "User not found.",
+            link: "/login"
+        });
         return;
     }
 
@@ -76,7 +89,10 @@ async function loginSubmit(req, res) {
         req.session.firstTime = result[0].firstTime;
         res.redirect('/members');
     } else {
-        res.send("Invalid password. <a href='/login'>Try again</a>");
+        res.render("errorMessage", {
+            message: "Invalid password.",
+            link: "/login"
+        });
     }
 }
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include("../parts/head"); %>
+  <title>Plant Games</title>
+</head>
+
+<body class="container tw-bg-green-200">
+  <header><%- include("../parts/header"); %></header>
+  <main>
+    <div class="container-fluid tw-bg-emerald-950/50">
+      <div class="row">
+        <div class="col">
+          <h2 class="mb-3">Level: <%= player.level %></h2>
+
+          <!-- EXP Bar -->
+          <div class="progress" style="height: 35px">
+            <div 
+              class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+              role="progressbar" 
+              style="width: <%= xpPercentage %>%"
+            >
+              <%= player.currentXP %> / <%= player.xpForNextLevel %> EXP
+            </div>
+
+            <p class="mt-3"><%= remainingXP %> EXP until next level</p>
+          </div>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+    <div class="container-fluid tw-bg-emerald-950/35"></div>
+  </main>
+  <footer><%- include("../parts/footer"); %></footer>
+</body>
+
+</html>

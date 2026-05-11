@@ -85,4 +85,4 @@ function logout(req, res) {
     res.redirect('/');
 }
 
-module.exports = {signupSubmit,loginSubmit,logout};
+module.exports = {signupSubmit, loginSubmit, logout};

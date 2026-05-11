@@ -3,7 +3,9 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo').default;
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2800;
+
+const fs = require('fs');
 
 // const bcrypt = require('bcrypt');
 // const saltRounds = 12;
@@ -25,8 +27,11 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 
 const {signupSubmit, loginSubmit, logout} = require('./public/js/authentication');
 
+app.set('view engine', 'ejs'); 
+
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/app/html'));
 app.use(express.json());
 
 app.use(mongoSanitizer(
@@ -48,34 +53,21 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-  res.redirect('/login');
+    if (req.session.authenticated) {
+        res.redirect('/members');
+        return;
+    }
+    res.redirect('/login');
 });
 
 app.get('/signup', (req, res) => {
-    res.send(`
-        <h2>Create User</h2>
-        <form action='/signupSubmit' method='post'>
-            <input name='name' type='text' placeholder='name'><br>
-            <input name='email' type='email' placeholder='email'><br>
-            <input name='password' type='password' placeholder='password'><br>
-            <button>Submit</button>
-            <p>Already have an account? <a href='/login'>Log in</a></p>
-        </form>
-    `);
+    res.render('signup');
 });
 
 app.post('/signupSubmit', signupSubmit);
 
 app.get('/login', (req, res) => {
-    res.send(`
-        <h2>Log in</h2>
-        <form action='/loginSubmit' method='post'>
-            <input name='email' type='email' placeholder='email'><br>
-            <input name='password' type='password' placeholder='password'><br>
-            <button>Submit</button>
-            <p>Don't have an account? <a href='/signup'>Create one</a></p>
-        </form>
-    `);
+    res.render('login');
 });
 
 app.post('/loginSubmit', loginSubmit);
@@ -86,15 +78,15 @@ app.get('/members', (req, res) => {
         return;
     }
 
-    res.send(`<h1>Hello, ${req.session.name}.</h1>
-              <a href='/logout'><button>Sign out</button></a>`);
+    let html = fs.readFileSync(__dirname + '/app/html/home.html', 'utf8');
+    res.send(html);
 });
 
 app.get('/logout', logout);
 
 app.use((req, res) => {
     res.status(404);
-    res.send("Page not found - 404");
+    res.render('404');
 });
 
 app.listen(PORT, () => {

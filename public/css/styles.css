@@ -5,8 +5,4 @@
 */
 @import "tailwindcss";
 
-/* Import Bootstrap CSS */
-@import "bootstrap/dist/css/bootstrap.css";
-@import "bootstrap/dist/css/bootstrap.min.css";
-
 /* Custom styles can be added here */

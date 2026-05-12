@@ -10,6 +10,20 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 const {database} = require('./mongoDBConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 
+function sendErrorMessage(res, message, link) {
+    res.render("errorMessage", {
+        message: message,
+        link: link
+    });
+}
+
+function makeNewSession(req, name, firstTime) {
+    req.session.authenticated = true;
+    req.session.name = name;
+    req.session.firstTime = firstTime;
+    req.session.cookie.maxAge = expireTime;
+}
+
 async function signupSubmit(req, res) {
     var name = req.body.name;
     var email = req.body.email;
@@ -24,30 +38,21 @@ async function signupSubmit(req, res) {
 
     const validationResult = schema.validate({name, email, password});
     if (validationResult.error != null) {
-        res.render("errorMessage", {
-            message: validationResult.error.message,
-            link: "/signup"
-        });
+        sendErrorMessage(res, validationResult.error.message, "/signup");
         return;
     }
 
     const existingUser = await userCollection.findOne({email: email});
     if (existingUser) {
-        res.render("errorMessage", {
-            message: "Email is already in use.",
-            link: "/signup"
-        });
+        sendErrorMessage(res, "Email is already in use.", "/signup");
         return;
     }
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
     await userCollection.insertOne({name: name, email: email, password: hashedPassword, firstTime: true});
 
-    req.session.authenticated = true;
-    req.session.name = name;
-    req.session.firstTime = true;
-    req.session.cookie.maxAge = expireTime;
-    res.redirect('/members');
+    makeNewSession(req, name, true);
+    res.redirect('/home');
 }
 
 async function loginSubmit(req, res) {
@@ -58,10 +63,7 @@ async function loginSubmit(req, res) {
     const validationResult = schema.validate(email);
 
     if (validationResult.error != null) {
-        res.render("errorMessage", {
-            message: "Invalid email format.",
-            link: "/login"
-        });
+        sendErrorMessage(res, "Invalid email format.", "/login");
         return;
     }
 
@@ -70,35 +72,21 @@ async function loginSubmit(req, res) {
                                        .toArray();
 
     if (result.length == 0) {
-        res.render("errorMessage", {
-            message: "User not found.",
-            link: "/login"
-        });
+        sendErrorMessage(res, "User not found.", "/login");
         return;
     }
 
     if (await bcrypt.compare(password, result[0].password)) {
-        req.session.authenticated = true;
-        req.session.name = result[0].name;
-        req.session.cookie.maxAge = expireTime;
-
         if (result[0].firstTime) {
             await userCollection.updateOne({email: email}, {$set: {firstTime: false}});
         }
 
-        req.session.firstTime = result[0].firstTime;
-        res.redirect('/members');
+        const name = result[0].name;
+        makeNewSession(req, name, false);
+        res.redirect('/home');
     } else {
-        res.render("errorMessage", {
-            message: "Invalid password.",
-            link: "/login"
-        });
+        sendErrorMessage(res, "Invalid password.", "/login");
     }
 }
 
-function logout(req, res) {
-    req.session.destroy();
-    res.redirect('/');
-}
-
-module.exports = {signupSubmit, loginSubmit, logout};
+module.exports = {signupSubmit, loginSubmit};

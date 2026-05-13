@@ -24,24 +24,22 @@ async function signupSubmit(req, res) {
 
     const validationResult = schema.validate({name, email, password});
     if (validationResult.error != null) {
-        res.send(`Error: ${validationResult.error.message}. <a href='/signup'>Try again</a>`);
+        const accountError = findAccountError(name, email, password);
+        sendErrorMessage(res, accountError, "/signup");
         return;
     }
 
     const existingUser = await userCollection.findOne({email: email});
     if (existingUser) {
-        res.send(`Email is already in use. <a href='/signup'>Try again</a>`);
+        sendErrorMessage(res, "Email is already in use.", "/signup");
         return;
     }
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
     await userCollection.insertOne({name: name, email: email, password: hashedPassword, firstTime: true});
 
-    req.session.authenticated = true;
-    req.session.name = name;
-    req.session.firstTime = true;
-    req.session.cookie.maxAge = expireTime;
-    res.redirect('/members');
+    makeNewSession(req, name, true);
+    res.redirect('/home');
 }
 
 async function loginSubmit(req, res) {
@@ -50,8 +48,9 @@ async function loginSubmit(req, res) {
 
     const schema = Joi.string().email().required();
     const validationResult = schema.validate(email);
+
     if (validationResult.error != null) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        sendErrorMessage(res, "Invalid email format.", "/login");
         return;
     }
 
@@ -60,29 +59,54 @@ async function loginSubmit(req, res) {
                                        .toArray();
 
     if (result.length == 0) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        sendErrorMessage(res, "User not found.", "/login");
         return;
     }
 
     if (await bcrypt.compare(password, result[0].password)) {
-        req.session.authenticated = true;
-        req.session.name = result[0].name;
-        req.session.cookie.maxAge = expireTime;
-
         if (result[0].firstTime) {
             await userCollection.updateOne({email: email}, {$set: {firstTime: false}});
         }
 
-        req.session.firstTime = result[0].firstTime;
-        res.redirect('/members');
+        const name = result[0].name;
+        makeNewSession(req, name, false);
+        res.redirect('/home');
     } else {
-        res.send("Invalid password. <a href='/login'>Try again</a>");
+        sendErrorMessage(res, "Invalid password.", "/login");
     }
 }
 
-function logout(req, res) {
-    req.session.destroy();
-    res.redirect('/');
+function findAccountError(name, email, password) {
+    if (name.length == 0 || email.length == 0 || password.length == 0) {
+        return "All fields are required.";
+    }
+    if (password.length < 8 || password.length > 64) {
+        return "Password must be between 8 and 64 characters.";
+    }
+    if (!/[A-Z]/.test(password)) {
+        return "Password must contain at least one uppercase letter.";
+    }
+    if (!/[a-z]/.test(password)) {
+        return "Password must contain at least one lowercase letter.";
+    }
+    if (!/[0-9]/.test(password)) {
+        return "Password must contain at least one number.";
+    }
+    return null;
 }
 
-module.exports = {signupSubmit,loginSubmit,logout};
+function sendErrorMessage(res, message, link) {
+    res.render("errorMessage", {
+        message: message,
+        link: link
+    });
+}
+
+function makeNewSession(req, name, firstTime) {
+    req.session.authenticated = true;
+    req.session.name = name;
+    req.session.firstTime = firstTime;
+    req.session.cookie.maxAge = expireTime;
+}
+
+module.exports = {signupSubmit, loginSubmit};

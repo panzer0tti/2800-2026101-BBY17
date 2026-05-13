@@ -1,19 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo').default;
+require("dotenv").config();
+// require("./public/js/utils.js");
+
+const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo").default;
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2800;
 
-// const bcrypt = require('bcrypt');
-// const saltRounds = 12;
-// const expireTime = 60 * 60 * 1000;
-// const Joi = require("joi");
+const fs = require("fs");
 
-// const {database} = require('./mongoDBConnection');
-// const userCollection = database.db(mongodb_database).collection('users');
+app.set("view engine", "ejs");
 
-const mongoSanitizer = require('mongo-sanitizer').default;
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/app/html'));
+app.use(express.json());
+
+const mongoSanitizer = require("mongo-sanitizer").default;
+app.use(mongoSanitizer({replaceWith: "_"}));
 
 const mongodb_user = process.env.MONGODB_USER;
 const mongodb_password = process.env.MONGODB_PASSWORD;
@@ -23,78 +27,71 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
-const {signupSubmit, loginSubmit, logout} = require('./public/js/authentication');
+const {signupSubmit, loginSubmit} = require("./public/js/authentication");
+const gameManager = require("./public/js/gameManager.js");
 
-app.use(express.urlencoded({extended: false}));
-app.use(express.static(__dirname + "/public"));
-app.use(express.json());
-
-app.use(mongoSanitizer(
-    {replaceWith: '_'}
-));
+function checkAuthentication(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect("/");
+        return;
+    }
+    next();
+}
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`,
     crypto: {
-        secret: mongodb_session_secret
+        secret: mongodb_session_secret,
     }
 });
 
 app.use(session({
     secret: node_session_secret,
-    store: mongoStore, 
-    saveUninitialized: false, 
-    resave: true,
+    store: mongoStore,
+    saveUninitialized: false,
+    resave: true
 }));
 
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-
-app.get('/signup', (req, res) => {
-    res.send(`
-        <h2>Create User</h2>
-        <form action='/signupSubmit' method='post'>
-            <input name='name' type='text' placeholder='name'><br>
-            <input name='email' type='email' placeholder='email'><br>
-            <input name='password' type='password' placeholder='password'><br>
-            <button>Submit</button>
-            <p>Already have an account? <a href='/login'>Log in</a></p>
-        </form>
-    `);
-});
-
-app.post('/signupSubmit', signupSubmit);
-
-app.get('/login', (req, res) => {
-    res.send(`
-        <h2>Log in</h2>
-        <form action='/loginSubmit' method='post'>
-            <input name='email' type='email' placeholder='email'><br>
-            <input name='password' type='password' placeholder='password'><br>
-            <button>Submit</button>
-            <p>Don't have an account? <a href='/signup'>Create one</a></p>
-        </form>
-    `);
-});
-
-app.post('/loginSubmit', loginSubmit);
-
-app.get('/members', (req, res) => {
-    if (!req.session.authenticated) {
-        res.redirect('/');
+app.get("/", (req, res) => {
+    if (req.session.authenticated) {
+        res.redirect("/home");
         return;
     }
-
-    res.send(`<h1>Hello, ${req.session.name}.</h1>
-              <a href='/logout'><button>Sign out</button></a>`);
+    res.redirect("/login");
 });
 
-app.get('/logout', logout);
+app.get("/signup", (req, res) => {
+    res.render("signup");
+});
+
+app.post("/signupSubmit", signupSubmit);
+
+app.get("/login", (req, res) => {
+    res.render("login");
+});
+
+app.post("/loginSubmit", loginSubmit);
+
+app.get("/home", checkAuthentication, (req, res) => {
+    let html = fs.readFileSync(__dirname + "/app/html/home.html", "utf8");
+    res.send(html);
+});
+
+app.get("/plant-map", checkAuthentication, (req, res) => {
+    let html = fs.readFileSync(__dirname + "/app/html/plant-map.html", "utf8");
+    res.send(html);
+});
+
+app.use("/plant-game", gameManager);
+
+app.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
 
 app.use((req, res) => {
     res.status(404);
-    res.send("Page not found - 404");
+    res.render("404");
 });
 
 app.listen(PORT, () => {

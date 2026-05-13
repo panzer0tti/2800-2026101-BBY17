@@ -32,6 +32,25 @@ header {
   z-index: 10;
 }
 
+.custom-header-bar {
+  background-color: #213123;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  padding: 12px 0;
+}
+
+.game-btns {
+  background-color: #35523a;
+  color: #f4f7ef;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.game-btns:hover {
+  background-color: #213123;
+  color: white;
+  transform: translateY(-2px);
+}
+
 .nav {
   align-items: center;
   display: flex;

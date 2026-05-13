@@ -10,20 +10,6 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 const {database} = require('./mongoDBConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 
-function sendErrorMessage(res, message, link) {
-    res.render("errorMessage", {
-        message: message,
-        link: link
-    });
-}
-
-function makeNewSession(req, name, firstTime) {
-    req.session.authenticated = true;
-    req.session.name = name;
-    req.session.firstTime = firstTime;
-    req.session.cookie.maxAge = expireTime;
-}
-
 async function signupSubmit(req, res) {
     var name = req.body.name;
     var email = req.body.email;
@@ -38,7 +24,8 @@ async function signupSubmit(req, res) {
 
     const validationResult = schema.validate({name, email, password});
     if (validationResult.error != null) {
-        sendErrorMessage(res, validationResult.error.message, "/signup");
+        const accountError = findAccountError(name, email, password);
+        sendErrorMessage(res, accountError, "/signup");
         return;
     }
 
@@ -87,6 +74,39 @@ async function loginSubmit(req, res) {
     } else {
         sendErrorMessage(res, "Invalid password.", "/login");
     }
+}
+
+function findAccountError(name, email, password) {
+    if (name.length == 0 || email.length == 0 || password.length == 0) {
+        return "All fields are required.";
+    }
+    if (password.length < 8 || password.length > 64) {
+        return "Password must be between 8 and 64 characters.";
+    }
+    if (!/[A-Z]/.test(password)) {
+        return "Password must contain at least one uppercase letter.";
+    }
+    if (!/[a-z]/.test(password)) {
+        return "Password must contain at least one lowercase letter.";
+    }
+    if (!/[0-9]/.test(password)) {
+        return "Password must contain at least one number.";
+    }
+    return null;
+}
+
+function sendErrorMessage(res, message, link) {
+    res.render("errorMessage", {
+        message: message,
+        link: link
+    });
+}
+
+function makeNewSession(req, name, firstTime) {
+    req.session.authenticated = true;
+    req.session.name = name;
+    req.session.firstTime = firstTime;
+    req.session.cookie.maxAge = expireTime;
 }
 
 module.exports = {signupSubmit, loginSubmit};

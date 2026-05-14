@@ -32,11 +32,32 @@
       <canvas id="canvas" style="display:none;"></canvas>
 
       <div id="scan-controls">
-         <!-- LIKE THIS? -->
+         
 <button id="start-camera">Start Camera</button>
 <button id="capture-plant">Capture Plant</button>
 <button id="back" style="display: none;">Back</button>
       </div>
+
+      <div id="result-box" style="display: none;">
+        <h2 id="plant-name"></h2>
+        <p id="ripe-level"></p>
+        <p id="season-indicator"></p>
+        <div id="safety-badge"></div>
+        <p id="confidence-level"></p>
+    </div>
+
+    <p id="lookalike-warning"></p>
+    <p id="allergy-warning"></p>
+    <div id="prep-guide">
+        <strong>Preparation:</strong>
+        <p></p>
+    </div>
+</div>
+
+    <figcaption>
+        <div id="results">Ready to scan...</div>
+    </figcaption>
+</figure>
 
       <figcaption>
          <div id="results">Scanning...</div>

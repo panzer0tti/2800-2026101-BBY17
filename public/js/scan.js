@@ -1,3 +1,14 @@
+const BoxPlantData = {
+    name: "Junberry",
+    ripeStatus: "High (Deep Red)",
+    inSeason: "Yes (May - July)",
+    safety: "Safe",
+    confidence: "94%",
+    lookalike: "Goldberry (also edible)",
+    allergy: "None known",
+    prep: "Wash thoroughly. Best eaten raw or as jam."
+};
+
 const startBtn = document.getElementById('start-camera');
 const captureBtn = document.getElementById('capture-plant'); // Add this line
 const video = document.getElementById('video');
@@ -20,19 +31,20 @@ backBtn.addEventListener('click', () => {
 });
 
 captureBtn.addEventListener('click', () => {
-    // 1. Set the canvas size to match the video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // ... existing canvas capture code ...
 
-    // 2. Draw the current video frame onto the canvas
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Populate the UI with your mock object data
+    document.getElementById('plant-name').innerText = mockPlantData.name;
+    document.getElementById('ripe-level').innerText = `Ripe Level: ${mockPlantData.ripeStatus}`;
+    document.getElementById('season-indicator').innerText = `In Season: ${mockPlantData.inSeason}`;
+    document.getElementById('safety-badge').innerText = mockPlantData.safety.toUpperCase();
+    document.getElementById('confidence-level').innerText = mockPlantData.confidence;
+    document.getElementById('lookalike-warning').innerHTML = `<strong>Lookalike Warning:</strong> ${mockPlantData.lookalike}`;
+    document.getElementById('allergy-warning').innerHTML = `<strong>Allergy Warning:</strong> ${mockPlantData.allergy}`;
+    document.getElementById('prep-guide').querySelector('p').innerText = mockPlantData.prep;
 
-    // 3. Convert the canvas to a data URL (the actual photo data)
-    const photoData = canvas.toDataURL('image/png');
-    
-    console.log("Photo Captured!", photoData);
-    document.getElementById('results').innerText = "Plant Captured! Ready to Identify.";
+    // Show the result box
+    document.getElementById('result-box').style.display = 'block';
 });
 
 startBtn.addEventListener('click', () => {

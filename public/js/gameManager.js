@@ -17,6 +17,9 @@ router.get("/", (req, res) => {
     const remainingXP = player.expToNextLevel - player.currentExp;
 
     res.render("games", {
+      title: "Plant Games",
+      user: req.session.user,
+      cssFiles: ["games.css"],
       player,
       xpPercentage,
       remainingXP,
@@ -24,5 +27,15 @@ router.get("/", (req, res) => {
     });
   }
 });
+
+// Plant Quiz Game Route
+const guessPlantsGame = require("./guessPlantsGame.js");
+router.get("/guess-plants", (req, res) => {
+  if (req.session.authenticated) {
+    guessPlantsGame;
+  }
+});
+
+// Ranked Match Game Route
 
 module.exports = router;

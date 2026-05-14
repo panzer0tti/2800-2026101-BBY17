@@ -3,6 +3,22 @@
     - Use it with the "tw-" prefix to avoid conflicts with Bootstrap classes
      (e.g., use "tw-bg-blue-500" instead of "bg-blue-500")
 */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Custom styles can be added here */
+.game-btns {
+  background-color: #497150;
+  color: #121d14;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.game-btns:hover {
+  background-color: #213123;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.progress-bar {
+  width: var(--progress);
+}

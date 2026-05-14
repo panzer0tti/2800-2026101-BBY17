@@ -1,7 +1,183 @@
-.custom-header-bar {
-    background-color: #063308;
+/* Default Desktop Layout */
+.search-bar {
+  order: 2;
 }
 
-.fw-bold {
-    color: #dfd6d6;
+.navbar-toggler {
+  order: 3;
+}
+/* Only For Desktop */
+@media (min-width: 992px) {
+  /* Ensures navbar content aligns properly*/
+  .navbar-collapse {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .search-bar {
+    order: 2;
+    width: 100%;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+  }
+
+  .navbar-toggler {
+    order: 3;
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+}
+
+.custom-header-bar {
+  background: #0e3125;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* BRAND */
+.title {
+  color: #da3e39;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 1.4rem;
+  transition: all 0.25s ease;
+}
+
+.title:hover {
+  color: #862927d7;
+  transform: scale(1.05);
+}
+
+/* NAV LINKS */
+.app-links {
+  color: #2d8a63;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: all 0.25s ease;
+  margin: 0 4px;
+}
+
+/* hover effect = soft glow */
+.app-links:hover {
+  background-color: #144333;
+  color: #2d8a63;
+  box-shadow: 0 0 10px #1a5741c9;
+  transform: translateY(-1px);
+}
+
+/* active page (optional class you can add later) */
+.app-links.active {
+  background-color: rgba(17, 156, 24, 0.25);
+  color: #faf7f2;
+}
+
+/* SEARCH BAR */
+form.d-flex input {
+  background-color: #144333;
+  border: 1px solid rgba(17, 156, 24, 0.3);
+  color: #faf7f2;
+}
+
+form.d-flex input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+form.d-flex input:focus {
+  background-color: #1a5741;
+  border-color: #267b59;
+  box-shadow: 0 0 8px #144333;
+}
+
+/* SEARCH BUTTON */
+.btn-outline-success {
+  border-color: #267b59;
+  color: #6bb191;
+}
+
+.btn-outline-success:hover {
+  background-color: #2d8a63;
+  color: #144333;
+}
+
+/* LOGOUT BUTTON */
+.btn-danger {
+  background-color: #e35b52;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.btn-danger:hover {
+  background-color: #862927;
+  transform: scale(1.05);
+}
+
+/* CUSTOM MOBILE TOGGLER */
+.custom-toggler {
+  width: 44px;
+  height: 40px;
+  box-shadow: 0 0 10px #14433329;
+  background-color: #144333b7;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+/* Hamburger lines */
+.custom-toggler span {
+  position: absolute;
+  left: 50%;
+  width: 22px;
+  height: 2px;
+  transform: translateX(-50%);
+  background-color: #6bb191;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Default positions (stacked evenly) */
+.custom-toggler span:nth-child(1) {
+  top: 11px;
+}
+
+.custom-toggler span:nth-child(2) {
+  top: 19px;
+}
+
+.custom-toggler span:nth-child(3) {
+  top: 27px;
+}
+
+/* Hover effect */
+.custom-toggler:hover {
+  border: 1px solid #1f6b4e24;
+  border-radius: 10px;
+  background-color: #144333b7;
+  transform: scale(1.05);
+}
+
+/* OPEN STATE → Morph into X */
+.navbar-toggler[aria-expanded="true"] span:nth-child(1) {
+  top: 19px;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.navbar-toggler[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-toggler[aria-expanded="true"] span:nth-child(3) {
+  top: 19px;
+  transform: translateX(-50%) rotate(-45deg);
 }

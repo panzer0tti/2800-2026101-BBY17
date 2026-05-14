@@ -15,6 +15,30 @@
   #map { flex: 1; }
   #view-nearby-btn { position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 900; padding: 12px; font-size: 1rem; cursor: pointer; }
 
+  #loading {
+    position: absolute;
+    top: 52px; left: 50%; transform: translateX(-50%);
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    display: none;
+    white-space: nowrap;
+  }
+  #error-banner {
+    position: absolute;
+    top: 52px; left: 16px; right: 16px;
+    z-index: 1000;
+    background: #fff3cd;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    display: none;
+  }
+
   #welcome-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.5);
@@ -22,12 +46,8 @@
     display: flex; align-items: center; justify-content: center;
   }
   #welcome-modal {
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 24px;
-    max-width: 320px;
-    width: 90%;
-    border-radius: 6px;
+    background: #fff; border: 1px solid #ccc;
+    padding: 24px; max-width: 320px; width: 90%; border-radius: 6px;
   }
   #welcome-modal h2 { margin-bottom: 8px; }
   #welcome-modal p  { font-size: 0.9rem; color: #444; margin-bottom: 16px; line-height: 1.5; }
@@ -36,39 +56,11 @@
   #welcome-start { background: #333; color: #fff; border: none; border-radius: 3px; }
   #welcome-skip  { background: none; border: 1px solid #ccc; border-radius: 3px; }
 
-  .tooltip {
-    position: absolute;
-    z-index: 1500;
-    background: #333;
-    color: #fff;
-    font-size: 0.78rem;
-    padding: 8px 12px;
-    border-radius: 4px;
-    max-width: 200px;
-    line-height: 1.4;
-    pointer-events: none;
-  }
-  .tooltip::after {
-    content: '';
-    position: absolute;
-    border: 6px solid transparent;
-  }
-  .tooltip.below::after  { top: -12px; left: 50%; transform: translateX(-50%); border-bottom-color: #333; }
-  .tooltip.above::after  { bottom: -12px; left: 50%; transform: translateX(-50%); border-top-color: #333; }
-  .tooltip.left::after   { right: -12px; top: 50%; transform: translateY(-50%); border-left-color: #333; }
-
   #walkthrough-bar {
-    position: fixed;
-    bottom: 70px; left: 16px; right: 16px;
-    z-index: 1600;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px 14px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
+    position: fixed; bottom: 70px; left: 16px; right: 16px;
+    z-index: 1600; background: #fff; border: 1px solid #ccc;
+    border-radius: 4px; padding: 10px 14px;
+    display: none; align-items: center; gap: 10px; font-size: 0.85rem;
   }
   #walkthrough-bar.active { display: flex; }
   #wt-text { flex: 1; color: #333; }
@@ -77,17 +69,35 @@
   #wt-progress { font-size: 0.75rem; color: #999; white-space: nowrap; }
 
   #hint-toggle {
-    position: fixed;
-    top: 52px; right: 8px;
-    z-index: 1000;
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    cursor: pointer;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    display: none;
+    position: fixed; top: 52px; right: 8px; z-index: 1000;
+    font-size: 0.7rem; padding: 4px 8px; cursor: pointer;
+    background: #fff; border: 1px solid #ccc; border-radius: 3px; display: none;
   }
+
+  #drawer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 950;
+    background: #fff;
+    border-top: 1px solid #ccc;
+    max-height: 60dvh;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  #drawer.open { transform: translateY(0); }
+  #drawer-header { padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  #drawer-close { background: none; border: none; font-size: 1rem; cursor: pointer; }
+  #drawer-list { overflow-y: auto; }
+  .drawer-item { padding: 10px 12px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; gap: 10px; align-items: center; }
+  .drawer-item:hover { background: #f5f5f5; }
+  .drawer-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 3px; flex-shrink: 0; }
+  .drawer-item-img-placeholder { width: 48px; height: 48px; background: #eee; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+  .drawer-item-info { flex: 1; }
+  .drawer-item-name { font-size: 0.9rem; font-weight: bold; }
+  .drawer-item-sci { font-size: 0.75rem; color: #666; font-style: italic; }
+  .drawer-item-date { font-size: 0.72rem; color: #999; margin-top: 2px; }
+  #drawer-loading { padding: 16px; text-align: center; font-size: 0.85rem; color: #666; }
 </style>
 </head>
 <body>
@@ -100,9 +110,19 @@
 </nav>
 
 <div id="map"></div>
+<div id="loading">Finding plants nearby…</div>
+<div id="error-banner"></div>
 <button id="view-nearby-btn">View Plants Nearby</button>
+<button id="hint-toggle">Guide</button>
 
-<button id="hint-toggle">💡 Hints</button>
+<div id="drawer">
+  <div id="drawer-header">
+    <strong>Nearby Plants</strong>
+    <button id="drawer-close">✕</button>
+  </div>
+  <div id="drawer-loading" style="display:none">Loading…</div>
+  <div id="drawer-list"></div>
+</div>
 
 <div id="welcome-overlay">
   <div id="welcome-modal">
@@ -122,22 +142,10 @@
   <button id="wt-next">Next</button>
 </div>
 
-<div class="tooltip" id="tooltip" style="display:none"></div>
-
 <script>
-
 const isFirstVisit = !localStorage.getItem('BeWilder_visited');
 
-const PLANTS = [
-  { id:1, name:"Stinging Nettle",  sci:"Urtica dioica",        emoji:"🌿", tags:["In Season","Edible"] },
-  { id:2, name:"Wild Blackberry",  sci:"Rubus allegheniensis", emoji:"🫐", tags:["In Season","Edible"] },
-  { id:3, name:"Bracken Fern",     sci:"Pteridium aquilinum",  emoji:"🌱", tags:["Out of Season"] },
-  { id:4, name:"Garlic Mustard",   sci:"Alliaria petiolata",   emoji:"🌼", tags:["In Season","Edible"] },
-  { id:5, name:"Trillium",         sci:"Trillium ovatum",      emoji:"🌸", tags:["In Season","Rare"] },
-  { id:6, name:"Sword Fern",       sci:"Polystichum munitum",  emoji:"🌿", tags:["In Season"] },
-  { id:7, name:"Cow Parsnip",      sci:"Heracleum maximum",    emoji:"🌾", tags:["Out of Season"] },
-];
-
+// ── MAP ──
 const map = L.map('map');
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors', maxZoom: 19,
@@ -146,101 +154,194 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let userCenter = [49.2827, -123.1207];
 map.setView(userCenter, 14);
 
-function seedPlants(lat, lng) {
-  PLANTS.forEach((plant, i) => {
-    const angle = (i / PLANTS.length) * 2 * Math.PI + Math.random() * 0.5;
-    const r = 0.004 + Math.random() * 0.010;
-    const plat = lat + Math.cos(angle) * r;
-    const plng = lng + Math.sin(angle) * r * 1.4;
-    const popup = `<b>${plant.emoji} ${plant.name}</b><br><i>${plant.sci}</i><br>${plant.tags.join(' · ')}`;
-    L.marker([plat, plng]).addTo(map).bindPopup(popup);
+let allObservations = [];
+
+async function loadPlants(lat, lng) {
+  const loading     = document.getElementById('loading');
+  const errorBanner = document.getElementById('error-banner');
+  loading.style.display = 'block';
+  errorBanner.style.display = 'none';
+  allObservations = [];
+
+  const params = new URLSearchParams({
+    taxon_id:      47126,
+    lat,
+    lng,
+    radius:        2,
+    per_page:      100,
+    quality_grade: 'research',
+    photos:        true,
+  });
+
+  try {
+    const res  = await fetch(`https://api.inaturalist.org/v1/observations?${params}`);
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data = await res.json();
+
+    if (!data.results.length) {
+      showError('No plant sightings found nearby. Try moving the map to explore a different area.');
+      loading.style.display = 'none';
+      return;
+    }
+
+    allObservations = data.results;
+    data.results.forEach(obs => addPin(obs));
+    loading.style.display = 'none';
+
+  } catch (err) {
+    loading.style.display = 'none';
+    showError('Could not load plant data. Check your connection and try again.');
+    console.error('iNaturalist error:', err);
+  }
+}
+
+function addPin(obs) {
+  if (!obs.location) return;
+  const [lat, lng] = obs.location.split(',').map(Number);
+
+  const name  = obs.taxon?.preferred_common_name || obs.taxon?.name || 'Unknown Plant';
+  const sci   = obs.taxon?.name || '';
+  const date  = obs.observed_on || 'unknown date';
+  const photo = obs.photos?.[0]?.url?.replace('square', 'small') || null;
+  const url   = `https://www.inaturalist.org/observations/${obs.id}`;
+
+  const popup = `
+    ${photo ? `<img src="${photo}" width="160" style="display:block;margin-bottom:6px;border-radius:3px">` : ''}
+    <b>${name}</b><br>
+    <i style="font-size:0.8em">${sci}</i><br>
+    <small>Spotted: ${date}</small><br>
+
+  `;
+
+  L.marker([lat, lng]).addTo(map).bindPopup(popup);
+}
+
+function showError(msg) {
+  const banner = document.getElementById('error-banner');
+  banner.textContent = msg;
+  banner.style.display = 'block';
+}
+
+const drawer = document.getElementById('drawer');
+
+function openDrawer() {
+  drawer.classList.add('open');
+  const list = document.getElementById('drawer-list');
+  list.innerHTML = '';
+
+  if (!allObservations.length) {
+    list.innerHTML = '<div style="padding:16px;font-size:0.85rem;color:#666">No plants loaded yet. Wait for the map to finish loading.</div>';
+    return;
+  }
+
+  allObservations.forEach(obs => {
+    const name  = obs.taxon?.preferred_common_name || obs.taxon?.name || 'Unknown Plant';
+    const sci   = obs.taxon?.name || '';
+    const date  = obs.observed_on || 'unknown date';
+    const photo = obs.photos?.[0]?.url || null;
+    const url   = `https://www.inaturalist.org/observations/${obs.id}`;
+
+    const item = document.createElement('div');
+    item.className = 'drawer-item';
+    item.innerHTML = `
+      ${photo
+        ? `<img src="${photo}" alt="${name}">`
+        : `<div class="drawer-item-img-placeholder">🌿</div>`}
+      <div class="drawer-item-info">
+        <div class="drawer-item-name">${name}</div>
+        <div class="drawer-item-sci">${sci}</div>
+        <div class="drawer-item-date">Spotted: ${date}</div>
+      </div>
+    `;
+    item.addEventListener('click', () => {
+      if (!obs.location) return;
+      const [lat, lng] = obs.location.split(',').map(Number);
+      drawer.classList.remove('open');
+      map.flyTo([lat, lng], 17, { duration: 1 });
+    });
+    list.appendChild(item);
   });
 }
+
+document.getElementById('view-nearby-btn').addEventListener('click', openDrawer);
+document.getElementById('drawer-close').addEventListener('click', () => drawer.classList.remove('open'));
 
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(pos => {
     userCenter = [pos.coords.latitude, pos.coords.longitude];
     map.setView(userCenter, 15);
-    seedPlants(...userCenter);
-  }, () => seedPlants(...userCenter));
+
+    L.circleMarker(userCenter, {
+      radius: 10,
+      fillColor: '#4285F4',
+      fillOpacity: 1,
+      color: '#fff',
+      weight: 3,
+    }).addTo(map).bindPopup('📍 You are here');
+
+    loadPlants(...userCenter);
+  }, () => {
+    showError('Location unavailable. Showing plants near Vancouver.');
+    loadPlants(...userCenter);
+  });
 } else {
-  seedPlants(...userCenter);
+  loadPlants(...userCenter);
 }
 
+map.on('moveend', () => {
+  const c = map.getCenter();
+  map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+  loadPlants(c.lat, c.lng);
+});
+
 const steps = [
-  {
-    text: "These pins show plants spotted near you. Tap one to learn more.",
-    target: null,
-    position: { bottom: '140px', left: '50%', transform: 'translateX(-50%)' },
-  },
-  {
-    text: "Use 'Scan Plant' to identify a plant using your camera.",
-    targetId: 'nav-scan',
-    arrowDir: 'below',
-  },
-  {
-    text: "'View Plants Nearby' will open a list of plants close to you.",
-    targetId: 'view-nearby-btn',
-    arrowDir: 'above',
-  },
-  {
-    text: "That's it! You are ready to explore.",
-    target: null,
-    position: { bottom: '140px', left: '50%', transform: 'translateX(-50%)' },
-  },
+  { text: "These pins show real plant sightings near you. Tap one to learn more." },
+  { text: "Use 'Scan Plant' to identify a plant using your camera." },
+  { text: "'View Plants Nearby' will open a list of plants close to you." },
+  { text: "That's it! You are ready to explore." },
 ];
 
 let currentStep = 0;
-const wtBar   = document.getElementById('walkthrough-bar');
-const wtText  = document.getElementById('wt-text');
-const wtProg  = document.getElementById('wt-progress');
-const wtNext  = document.getElementById('wt-next');
-const wtSkip  = document.getElementById('wt-skip');
+const wtBar  = document.getElementById('walkthrough-bar');
+const wtText = document.getElementById('wt-text');
+const wtProg = document.getElementById('wt-progress');
+const wtNext = document.getElementById('wt-next');
+const wtSkip = document.getElementById('wt-skip');
 
 function showStep(i) {
   if (i >= steps.length) { endWalkthrough(); return; }
-  const step = steps[i];
-  wtText.textContent = step.text;
+  wtText.textContent = steps[i].text;
   wtProg.textContent = `${i + 1} / ${steps.length}`;
   wtNext.textContent = i === steps.length - 1 ? 'Done' : 'Next';
 }
-
 function endWalkthrough() {
   wtBar.classList.remove('active');
   localStorage.setItem('BeWilder_visited', '1');
   document.getElementById('hint-toggle').style.display = 'block';
 }
-
 function startWalkthrough() {
   currentStep = 0;
   wtBar.classList.add('active');
   showStep(0);
 }
-
 wtNext.addEventListener('click', () => { currentStep++; showStep(currentStep); });
 wtSkip.addEventListener('click', endWalkthrough);
 
 const overlay = document.getElementById('welcome-overlay');
-
 if (!isFirstVisit) {
   overlay.style.display = 'none';
   document.getElementById('hint-toggle').style.display = 'block';
 }
-
 document.getElementById('welcome-start').addEventListener('click', () => {
   overlay.style.display = 'none';
   startWalkthrough();
 });
-
 document.getElementById('welcome-skip').addEventListener('click', () => {
   overlay.style.display = 'none';
   localStorage.setItem('BeWilder_visited', '1');
   document.getElementById('hint-toggle').style.display = 'block';
 });
-
-document.getElementById('hint-toggle').addEventListener('click', () => {
-  startWalkthrough();
-});
+document.getElementById('hint-toggle').addEventListener('click', startWalkthrough);
 </script>
 </body>
 </html>

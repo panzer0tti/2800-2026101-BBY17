@@ -1,44 +1,64 @@
-<%- include("templates/header"); %>
-    <div class="container-fluid">
-      <div class="row justify-content-center g-4">
-        <!-- Card 1 -->
-          <div class="col">
-            <div class="card p-3 h-100 w-100 shadow text-center">
-              <h2 class="mb-3">Level: <%= player.level %></h2>
+<%- include("templates/header", {title: title, user: user, cssFiles: cssFiles}); %>
+<div class="container d-flex flex-column gap-5">
+  <div class="row justify-content-center">
+    <!-- Card 1 -->
+    <div class="col">
+      <div class="card p-3 h-100 w-100 shadow text-center">
+        <h2 class="mb-3 fw-bolder">Level: <%= player.level %></h2>
 
-              <!-- EXP Bar -->
-              <div class="progress" style="height: 35px">
-                <div 
-                  class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
-                  role="progressbar" 
-                  style="width: <%= xpPercentage %>%"
-                >
-                  <%= player.currentXP %> / <%= player.xpForNextLevel %> EXP
-                </div>
-              </div>
-              <p class="mt-3"><%= remainingXP %> EXP until next level</p>
-            </div>
+        <!-- EXP Bar -->
+        <div class="position-relative">
+          <!-- Progress Bar Background -->
+          <div class="progress" style="height: 35px">
+            <div
+              class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+              style="--progress: <%= xpPercentage %>%"
+            ></div>
           </div>
-          <div class="row justify-content-center g-4 py-4">
-            <div class="col">
-              <div class="card p-3 h-100 w-100 shadow text-center">
-                <button class="mb-4 btn game-btns">New Game Session</button>
-                <button class="mb-5 btn game-btns">Plant Knowledge Review</button>
-                <p class="mb-3">Match History</p>
-                <% if (matches && matches.length > 0) {%>
-                  <% matches.forEach(match => { %>
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h3><%= match.name %></h3>
-                      </div>
-                    </div>
-                  <% }) %>
-                <% } else { %>
-                  <p>No match found.</p>
-                <% } %>
-              </div>
-            </div>
+
+          <!-- Progress Bar Centered Text -->
+          <div
+            class="text-dark position-absolute top-50 start-50 translate-middle fw-bold fs-6"
+          >
+            <%= player.currentXP %>
+            /
+            <%= player.xpForNextLevel %>
+            EXP
           </div>
         </div>
+        <p class="mt-3"><%= remainingXP %> EXP until next level</p>
       </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="card h-100 shadow text-center mb-4 gap-3">
+        <div
+          class="card-body d-flex flex-column justify-content-evenly align-items-center"
+        >
+          <button class="p-2 btn game-btns fw-bold">
+            New Ranked Match Session
+          </button>
+          <a class="p-2 btn game-btns fw-bold" href="/plant-game/guess-plants">
+            Plant Knowledge Review
+          </a>
+        </div>
+        <h2 class="fw-bold display-6">Match History</h2>
+
+        <% if (matches && matches.length > 0) { %> <% matches.forEach(match => {
+        %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h3><%= match.name %></h3>
+          </div>
+        </div>
+        <% }) %>
+        <% } else { %>
+          <p>No match found.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
 <%- include("templates/footer"); %>

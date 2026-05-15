@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 
   res.render("games", {
     title: "Plant Games",
-    user: req.session.user,
+    user: req.session.authenticated,
     cssFiles: ["games.css"],
     player,
     xpPercentage,

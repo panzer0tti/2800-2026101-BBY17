@@ -29,13 +29,13 @@ async function signupSubmit(req, res) {
     const validationResult = schema.validate({name, email, password, question, answer});
     if (validationResult.error != null) {
         const signupError = findSignupError(name, email, password, question, answer);
-        sendErrorMessage(res, signupError, "/signup");
+        sendErrorMessage(req, res, "Signup Error", signupError, "/signup", "Signup");
         return;
     }
 
     const existingUser = await userCollection.findOne({email: email});
     if (existingUser) {
-        sendErrorMessage(res, ["Email is already in use."], "/signup");
+        sendErrorMessage(req, res, "Signup Error", ["Email is already in use."], "/signup", "Signup");
         return;
     }
 
@@ -59,7 +59,7 @@ async function loginSubmit(req, res) {
     const validationResult = schema.validate({email, password});
     if (validationResult.error != null) {
         const loginError = findLoginError(email, password);
-        sendErrorMessage(res, loginError, "/login");
+        sendErrorMessage(req, res, "Login Error", loginError, "/login", "Login");
         return;
     }
 
@@ -68,7 +68,7 @@ async function loginSubmit(req, res) {
                                        .toArray();
 
     if (result.length == 0) {
-        sendErrorMessage(res, ["User not found."], "/login");
+        sendErrorMessage(req, res, "Login Error", ["User not found."], "/login", "Login");
         return;
     }
 
@@ -82,7 +82,7 @@ async function loginSubmit(req, res) {
         makeNewSession(req, sessionName, sessionEmail, false);
         res.redirect('/home');
     } else {
-        sendErrorMessage(res, ["Incorrect password."], "/login");
+        sendErrorMessage(req, res, "Login Error", ["Incorrect password."], "/login", "Login");
     }
 }
 
@@ -100,7 +100,7 @@ async function backupLoginSubmit(req, res) {
     const validationResult = schema.validate({email, question, answer});
     if (validationResult.error != null) {
         const backupLoginError = findBackupLoginError(email, question, answer);
-        sendErrorMessage(res, backupLoginError, "/backupLogin");
+        sendErrorMessage(req, res, "Backup Login Error", backupLoginError, "/backupLogin", "Backup Login");
         return;
     }
 
@@ -109,12 +109,12 @@ async function backupLoginSubmit(req, res) {
                                        .toArray();
     
     if (result.length == 0) {
-        sendErrorMessage(res, ["User not found."], "/backupLogin");
+        sendErrorMessage(req, res, "Backup Login Error", ["User not found."], "/backupLogin", "Backup Login");
         return;
     }
 
     if (result[0].question !== question) {
-        sendErrorMessage(res, ["Incorrect security question."], "/backupLogin");
+        sendErrorMessage(req, res, "Backup Login Error", ["Incorrect security question."], "/backupLogin", "Backup Login");
         return;
     }
 
@@ -124,7 +124,7 @@ async function backupLoginSubmit(req, res) {
         makeNewSession(req, sessionName, sessionEmail, false);
         res.redirect('/home');
     } else {
-        sendErrorMessage(res, ["Incorrect answer."], "/backupLogin");
+        sendErrorMessage(req, res, "Backup Login Error", ["Incorrect answer."], "/backupLogin", "Backup Login");
     }
 }
 
@@ -187,12 +187,15 @@ function emptyEntrySubmitted(name, email, password, question, answer) {
            answer.length == 0;
 }
 
-function sendErrorMessage(res, message, link) {
+function sendErrorMessage(req, res, title, message, link, button) {
     res.render("popup-message", {
+        title: title,
         message: message,
         link: link,
-        button: "Try Again",
-        alertType: "danger"
+        button: "Back to " + button,
+        alertType: "danger",
+        user: req.session.authenticated,
+        cssFiles: []
     });
 }
 

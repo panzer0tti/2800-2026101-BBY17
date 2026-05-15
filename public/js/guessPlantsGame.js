@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const PlantName = require("./plantName.js");
-const PlantInfo = require("./plantInfo.js");
+const PlantName = require("./plantName");
+const PlantInfo = require("./plantInfo");
+const {sendErrorMessage} = require("./authentication")
 
 async function getRandomPlant(req) {
   if (!req.session.usedPlants) {
@@ -67,20 +68,14 @@ router.get("/", async (req, res) => {
 
     res.render("guessPlant", {
       title: "Guess The Plant",
-      user: req.session.user,
+      user: req.session.authenticated,
       cssFiles: ["games.css"],
       plant,
       result: null,
     });
   } catch (err) {
     console.error(err);
-    res.render("errorMessage", {
-      title: "Error - Failed Quiz Loading",
-      message: "Loading Quiz Failed",
-      link: "/plant-game",
-      user: req.session.user,
-      cssFiles: [""],
-    });
+    sendErrorMessage(req, res, "Error - Failed Quiz Loading", ["Loading Quiz Failed"], "/plant-game", "Games");
   }
 });
 
@@ -120,20 +115,14 @@ router.post("/guess", async (req, res) => {
 
     res.render("guessPlant", {
       title: "Guess The Plant",
-      user: req.session.user,
+      user: req.session.authenticated,
       cssFiles: ["games.css"],
       plant,
       result,
     });
   } catch (err) {
     console.error(err);
-    res.render("errorMessage", {
-      title: "Error - Failed Quiz Check",
-      message: "Failed User Guess Check",
-      link: "/plant-game",
-      user: req.session.user,
-      cssFiles: [],
-    });
+    sendErrorMessage(req, res, "Error - Failed Quiz Check", ["Failed User Guess Check"], "/plant-game", "Games");
   }
 });
 
@@ -155,7 +144,7 @@ router.get("/next", async (req, res) => {
 
   res.render("guessPlant", {
     title: "Guess The Plant",
-    user: req.session.user,
+    user: req.session.authenticated,
     cssFiles: ["games.css"],
     plant,
     result: null,

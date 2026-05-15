@@ -22,20 +22,20 @@ async function verifyIdentity(req, res) {
     const validationResult = schema.validate({question, answer});
     if (validationResult.error != null) {
         const identityError = findIdentityError(question, answer);
-        sendErrorMessage(res, identityError, "/changePassword");
+        sendErrorMessage(req, res, "Invalid Input", identityError, "/changePassword", "Change Password");
         return;
     }
 
     const user = await userCollection.findOne({email: email});
     if (user.question !== question) {
-        sendErrorMessage(res, ["Incorrect security question."], "/changePassword");
+        sendErrorMessage(req, res, "Incorrect Security Question", ["Incorrect security question."], "/changePassword", "Change Password");
         return;
     }
 
     if (await bcrypt.compare(answer, user.answer)) {
         res.redirect("/changePasswordForm");
     } else {
-        sendErrorMessage(res, ["Incorrect answer."], "/changePassword");
+        sendErrorMessage(req, res, "Incorrect Answer", ["Incorrect answer."], "/changePassword", "Change Password");
     }
 }
 
@@ -64,24 +64,24 @@ async function changePasswordSubmit(req, res) {
     const validationResult = schema.validate({newPassword, confirmPassword});
     if (validationResult.error != null) {
         const passwordError = findPasswordError(newPassword, confirmPassword);
-        sendErrorMessage(res, passwordError, "/changePasswordForm");
+        sendErrorMessage(req, res, "Invalid Input", passwordError, "/changePasswordForm", "Change Password");
         return;
     }
 
     if (newPassword !== confirmPassword) {
-        sendErrorMessage(res, ["New password and confirm password do not match."], "/changePasswordForm");
+        sendErrorMessage(req, res, "Password Mismatch", ["New password and confirm password do not match."], "/changePasswordForm", "Change Password");
         return;
     }
 
     const user = await userCollection.findOne({email: email});
     if (await bcrypt.compare(newPassword, user.password)) {
-        sendErrorMessage(res, ["New password cannot be the same as the old password."], "/changePasswordForm");
+        sendErrorMessage(req, res, "Identical Password", ["New password cannot be the same as the old password."], "/changePasswordForm", "Change Password");
         return;
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     await userCollection.updateOne({email: email}, {$set: {password: hashedPassword}});
-    sendSuccessMessage(res, ["Password changed successfully."], "/profile");
+    sendSuccessMessage(req, res, "Password Changed", ["Password changed successfully."], "/profile", "Profile");
 }
 
 function findPasswordError(newPassword, confirmPassword) {
@@ -104,12 +104,15 @@ function findPasswordError(newPassword, confirmPassword) {
     return passwordError || null;
 }
 
-function sendSuccessMessage(res, message, link) {
+function sendSuccessMessage(req, res, title, message, link, button) {
     res.render("popup-message", {
+        title: title,
         message: message,
         link: link,
-        button: "Go to Profile",
-        alertType: "success"
+        button: "Go to " + button,
+        alertType: "success",
+        user: req.session.authenticated,
+        cssFiles: []
     });
 }
 

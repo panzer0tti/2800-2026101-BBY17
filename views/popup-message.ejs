@@ -1,6 +1,6 @@
-<%- include("templates/header") %>
+<%- include("templates/header", {title: title, user: user}) %>
     <div class="alert alert-<%= alertType %>" role="alert">
         <%- include("templates/message-list", {message: message}) %>
     </div>
-    <a href='<%= link %>' class="btn btn-secondary"><%= button %></a>
+    <a href="<%= link %>" class="btn btn-secondary"><%= button %></a>
 <%- include("templates/footer") %>

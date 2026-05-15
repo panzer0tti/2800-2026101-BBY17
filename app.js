@@ -1,7 +1,5 @@
 require("dotenv").config();
-// require("./public/js/utils.js");
 
-const fs = require("fs");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
@@ -42,50 +40,43 @@ mongoose
     console.error("MongoDB connection failed: ", err);
   });
 
-const {
-  signupSubmit,
-  loginSubmit,
-  backupLoginSubmit,
-} = require("./public/js/authentication");
-const { displayUserInfo, updateUserInfo } = require("./public/js/profileData");
-const {
-  verifyIdentity,
-  changePasswordSubmit,
-} = require("./public/js/changePassword");
+const {checkAuthentication, alreadyLoggedIn,
+       renderPage, HTMLRender} = require("./public/js/appHelper");
+const {signupSubmit, loginSubmit,
+       backupLoginSubmit} = require("./public/js/authentication");
+const {displayUserInfo, updateUserInfo} = require("./public/js/profileData");
+const {verifyIdentity, changePasswordSubmit} = require("./public/js/changePassword");
 const gameManager = require("./public/js/gameManager");
-// const { name } = require("ejs");
 
-function checkAuthentication(req, res, next) {
-  if (!req.session.authenticated) {
-    res.redirect("/");
-    return;
-  }
-  next();
-}
+// const {title} = require("process");
+// console.log(title);
 
-function alreadyLoggedIn(req, res, next) {
-  if (req.session.authenticated) {
-    res.redirect("/home");
-    return;
-  }
-  next();
-}
+const navLinksUnauth = [
+  { name: "Welcome", url: "/" },
+  { name: "Sign Up", url: "/signup" },
+  { name: "Log In", url: "/login" },
+  { name: "Backup Log In", url: "/backupLogin" },
+];
 
-function HTMLRender(res, htmlPath) {
-  let html = fs.readFileSync(__dirname + "/app/html/" + htmlPath, "utf8");
-  res.send(html);
-}
-
-const navLinks = [
+const navLinksAuth = [
   { name: "Home", url: "/home" },
   { name: "Scan Plant", url: "/scan" },
-  { name: "Map", url: "/plant-map" },
-  { name: "Berry Guess", url: "/plant-game" },
+  { name: "Plant Map", url: "/plant-map" },
   { name: "My Plants", url: "/my-plants" },
   { name: "Encyclopedia", url: "/encyclopedia" },
+  { name: "Plant Games", url: "/plant-game" },
   { name: "Profile", url: "/profile" },
   { name: "Logout", url: "/logout" },
 ];
+
+app.use((req, res, next) => {
+  const pathFolders = req.path.split("/").slice(1);
+  const folder = "/" + pathFolders[0];
+  app.locals.folder = folder;
+  app.locals.navLinksAuth = navLinksAuth;
+  app.locals.navLinksUnauth = navLinksUnauth;
+  next();
+});
 
 var mongoStore = MongoStore.create({
   mongoUrl: mongoURL,
@@ -103,25 +94,14 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
-  const pathFolders = req.path.split("/").slice(1);
-  const folder = "/" + pathFolders[0];
-  app.locals.folder = folder;
-  app.locals.navLinks = navLinks;
-  next();
-});
-
+// Home Page Route
 app.get("/", alreadyLoggedIn, (req, res) => {
   res.redirect("/login");
 });
 
 // Signup Page Route
 app.get("/signup", alreadyLoggedIn, (req, res) => {
-  res.render("signup", {
-    title: "Sign Up",
-    user: req.session.user,
-    cssFiles: [],
-  });
+  renderPage(req, res, "signup", "Sign Up");
 });
 
 // Signup Handler
@@ -129,32 +109,31 @@ app.post("/signupSubmit", signupSubmit);
 
 // Login Page Route
 app.get("/login", alreadyLoggedIn, (req, res) => {
-  res.render("login", {
-    title: "Log In",
-    user: req.session.user,
-    cssFiles: [],
-  });
+  renderPage(req, res, "login", "Log In");
 });
 
 // Login Handler
 app.post("/loginSubmit", loginSubmit);
 
+// Backup Login Page Route
 app.get("/backupLogin", alreadyLoggedIn, (req, res) => {
-  res.render("backup-login");
+  renderPage(req, res, "backup-login", "Backup Log In");
 });
 
+// Backup Login Handler
 app.post("/backupLoginSubmit", backupLoginSubmit);
 
-// Static Homepage HTML Page Route
+// Static Homepage HTML Route
 app.get("/home", checkAuthentication, (req, res) => {
   HTMLRender(res, "home.html");
 });
 
-// Static Plant Map HTML Page Route
+// Static Plant Map Page HTML Route
 app.get("/plant-map", checkAuthentication, (req, res) => {
   HTMLRender(res, "plant-map.html");
 });
 
+// Static Plant Scan Page Route
 app.get("/scan", checkAuthentication, (req, res) => {
   HTMLRender(res, "scan.html");
 });
@@ -162,25 +141,27 @@ app.get("/scan", checkAuthentication, (req, res) => {
 // Plant Games Page Route
 app.use("/plant-game", checkAuthentication, gameManager);
 
+// Profile Page Route
 app.get("/profile", checkAuthentication, displayUserInfo);
 
+// Update Profile Handler
 app.post("/updateProfile", checkAuthentication, updateUserInfo);
 
+// Change Password Security Page
 app.get("/changePassword", checkAuthentication, (req, res) => {
-  res.render("change-password");
+  renderPage(req, res, "change-password", "Change Password");
 });
 
+// Change Password Security Handler
 app.post("/changePasswordSubmit", checkAuthentication, verifyIdentity);
 
+// Change Password Form Page
 app.get("/changePasswordForm", checkAuthentication, (req, res) => {
-  res.render("change-password-form");
+  renderPage(req, res, "change-password-form", "Change Password");
 });
 
-app.post(
-  "/changePasswordFormSubmit",
-  checkAuthentication,
-  changePasswordSubmit,
-);
+// Change Password Form Handler
+app.post("/changePasswordFormSubmit", checkAuthentication, changePasswordSubmit);
 
 // Logout Handler
 app.get("/logout", (req, res) => {
@@ -188,12 +169,8 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// Try-catch 404 Page-not-found Error Page
+// 404 Page-not-found Error Page
 app.use((req, res) => {
   res.status(404);
-  res.render("404", {
-    title: "404 - Page not found",
-    user: req.session.user,
-    cssFiles: [],
-  });
+  renderPage(req, res, "404", "404 - Page not found");
 });

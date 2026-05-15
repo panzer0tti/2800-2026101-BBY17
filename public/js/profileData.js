@@ -11,6 +11,9 @@ async function displayUserInfo(req, res) {
     const email = req.session.email;
     const user = await userCollection.findOne({email: email});
     res.render("profile", {
+        title: "Profile",
+        user: req.session.authenticated,
+        cssFiles: [],
         name: user.name,
         location: user.city,
         phoneNum: user.phoneNum,
@@ -45,7 +48,7 @@ function validateUserInfo(req, res, name, location, phoneNum) {
     const validationResult = schema.validate({name, location, phoneNum});
     if (validationResult.error) {
         const profileDataError = findProfileDataError(name, location, phoneNum);
-        sendErrorMessage(res, profileDataError, "/profile");
+        sendErrorMessage(req, res, "Invalid Input", profileDataError, "/profile", "Profile");
         return false;
     }
     return true;

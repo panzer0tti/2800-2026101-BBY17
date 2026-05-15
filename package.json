@@ -4,6 +4,7 @@
   "description": "Team Name: BBY-17\r Team Members: \r - Sal Yunus\r - Abdullah Munawar\r - Hezekiah Horfilla\r - Marcus Leung\r - Minh Ngoc Ngo",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

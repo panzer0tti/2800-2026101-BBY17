@@ -128,17 +128,6 @@ async function backupLoginSubmit(req, res) {
     }
 }
 
-function findBackupLoginError(email, question, answer) {
-    let backupLoginError = [];
-    if (email.length == 0 || question.length == 0 || answer.length == 0) {
-        backupLoginError.push("Please fill in all fields.");
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        backupLoginError.push("Please enter a valid email address.");
-    }
-    return backupLoginError || null;
-}
-
 function findSignupError(name, email, password, question, answer) {
     let signupError = [];
     if (!question || emptyEntrySubmitted(name, email, password, question, answer)) {
@@ -179,6 +168,17 @@ function findLoginError(email, password) {
     return loginError || null;
 }
 
+function findBackupLoginError(email, question, answer) {
+    let backupLoginError = [];
+    if (email.length == 0 || question.length == 0 || answer.length == 0) {
+        backupLoginError.push("Please fill in all fields.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        backupLoginError.push("Please enter a valid email address.");
+    }
+    return backupLoginError || null;
+}
+
 function emptyEntrySubmitted(name, email, password, question, answer) {
     return name.length == 0 ||
            email.length == 0 ||
@@ -188,9 +188,11 @@ function emptyEntrySubmitted(name, email, password, question, answer) {
 }
 
 function sendErrorMessage(res, message, link) {
-    res.render("error-message", {
+    res.render("popup-message", {
         message: message,
-        link: link
+        link: link,
+        button: "Try Again",
+        alertType: "danger"
     });
 }
 

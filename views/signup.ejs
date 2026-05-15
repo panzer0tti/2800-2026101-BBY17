@@ -18,17 +18,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><strong>Choose a security question</strong></label>
-                        <select name="question" class="form-select" required>
-                            <option value="" selected disabled>Select question</option>
-                            <option value="What was your first pet’s name?">What was your first pet’s name?</option>
-                            <option value="What city were you born in?">What city were you born in?</option>
-                            <option value="What was your first school?">What was your first school?</option>
-                            <option value="What was the name of your best friend?">What was the name of your best friend?</option>
-                            <option value="What street did you grow up on?">What street did you grow up on?</option>
-                            <option value="What was the name of your first employer?">What was the name of your first employer?</option>
-                            <option value="What was the name of your favorite teacher?">What was the name of your favorite teacher?</option>
-                            <option value="What country do you want to visit?">What country do you want to visit?</option>
-                        </select>
+                        <%- include("templates/security-questions") %>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><strong>Provide an answer to the question</strong></label>
@@ -42,27 +32,7 @@
                         <a href="/login">Log in</a>
                     </p>
                 </form>
-                <div class="card shadow-sm mt-4">
-                    <div class="card-body">
-                        <h6 class="card-title mb-3 text-primary">
-                            <strong>Password must:</strong>
-                        </h6>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item border-start border-3 ps-3">
-                                Contain 8 to 20 characters
-                            </li>
-                            <li class="list-group-item border-start border-3 ps-3">
-                                Contain a lowercase letter
-                            </li>
-                            <li class="list-group-item border-start border-3 ps-3">
-                                Contain an uppercase letter
-                            </li>
-                            <li class="list-group-item border-start border-3 ps-3">
-                                Contain at least one number
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <%- include("templates/password-requirements") %>
                 <div class="alert alert-danger mt-4 shadow-sm" role="alert">
                     <strong>IMPORTANT: In order to change your password later on, you'll need to remember your security question and its answer, so write them down in a safe place!</strong>
                 </div>

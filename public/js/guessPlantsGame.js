@@ -1,19 +1,53 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const PlantName = require('./plantName.js');
-const PlantInfo = require('./plantInfo.js');
-const plantName = require('./plantName.js');
+const PlantName = require("./plantName.js");
+const PlantInfo = require("./plantInfo.js");
+
+async function getRandomPlant(req) {
+  if (!req.session.usedPlants) {
+    req.session.usedPlants = [];
+  }
+
+  const total = await PlantName.estimatedDocumentCount();
+
+  if (req.session.usedPlants.length >= total) {
+    req.session.usedPlants = [];
+  }
+
+  let plant = null;
+
+  for (let i = 0; i < 10; i++) {
+    const random = Math.floor(Math.random() * total);
+
+    const candidate = await PlantName.findOne().skip(random);
+
+    if (!req.session.usedPlants.includes(candidate._id.toString())) {
+      plant = candidate;
+      break;
+    }
+
+    attempts++;
+  }
+
+  if (!plant) {
+    plant = await PlantName.findOne().skip(Math.floor(Math.random() * total));
+  }
+
+  req.session.usedPlants.push(plant._id.toString());
+
+  return plant;
+}
 
 /* Start Plant Quiz */
-router.get('/', async (req, res) => {
-  try {
-    // Pick random plant name(s)
-    const randomPlantsArray = await PlantName.aggregate([
-      { $sample: { size: 1 } },
-    ]);
+router.get("/", async (req, res) => {
+  /* Initializate session's plant storage */
+  if (!req.session.usedPlants) {
+    req.session.usedPlants = [];
+  }
 
-    const plantName = randomPlantsArray[0];
+  try {
+    const plantName = await getRandomPlant(req);
 
     // Find matching Plant's ID in plant_info
     const plantInfo = await PlantInfo.findOne({
@@ -22,77 +56,110 @@ router.get('/', async (req, res) => {
 
     // Combine both plantName and plantInfo to get plant in Object form
     const plant = {
-      ...plantName.toObject(),
-      ...plantInfo.toObject(),
+      ...(plantName ? plantName.toObject() : {}),
+      ...(plantInfo ? plantInfo.toObject() : {}),
     };
 
-    // Save answer in a game session
+    console.log("plant: ", plant);
+
+    req.session.currentPlantById = plantName._id.toString();
     req.session.correctPlant = plantName.commonName;
 
-    res.render('guessPlant', {
-      title: 'Guess The Plant',
+    res.render("guessPlant", {
+      title: "Guess The Plant",
       user: req.session.user,
-      cssFiles: ['games.css'],
+      cssFiles: ["games.css"],
       plant,
       result: null,
     });
   } catch (err) {
     console.error(err);
-    res.render('errorMessage', {
-      title: 'Error - Failed Quiz Loading',
+    res.render("errorMessage", {
+      title: "Error - Failed Quiz Loading",
+      message: "Loading Quiz Failed",
+      link: "/plant-game",
       user: req.session.user,
-      cssFiles: [''],
+      cssFiles: [""],
     });
   }
 });
 
 // Check User's Guess
-router.post('/guess', async (req, res) => {
+router.post("/guess", async (req, res) => {
+  /* Initializate session's plant storage */
+  if (!req.session.usedPlants) {
+    req.session.usedPlants = [];
+  }
+
   try {
-    const userGuess = req.body.trim().toLowerCase();
+    const userGuess = req.body.userGuess.trim().toLowerCase();
     const correctAnswer = req.session.correctPlant.toLowerCase();
 
-    let result = '';
+    let result = "";
 
     if (userGuess == correctAnswer) {
-      result = 'Correct!';
+      result = "Correct!";
     } else {
-      result = `Wrong! The correct answer was ${req.session.correctPlant}`;
+      result = `Wrong! The correct answer was "${req.session.correctPlant}"`;
     }
 
-    // Load the next question, or random plant
-    const randomPlantsArray = await PlantName.aggregate([
-      { $sample: { size: 1 } },
-    ]);
+    const plantName = await PlantName.findById(req.session.currentPlantById);
 
-    const plantName = randomPlantsArray[0];
-
-    const plantInfo = plantName.findOne({
+    const plantInfo = await PlantInfo.findOne({
       plantId: plantName._id,
     });
 
     const plant = {
-      ...plantName.toObject(),
-      ...plantInfo.toObject(),
+      ...(plantName ? plantName.toObject() : {}),
+      ...(plantInfo ? plantInfo.toObject() : {}),
     };
+
+    console.log("plant: ", plant);
 
     req.session.correctPlant = plantName.commonName;
 
-    res.render('guessPlant', {
-      title: 'Guess The Plant',
+    res.render("guessPlant", {
+      title: "Guess The Plant",
       user: req.session.user,
-      cssFiles: ['games.css'],
+      cssFiles: ["games.css"],
       plant,
       result,
     });
   } catch (err) {
     console.error(err);
-    res.render('errorMessage', {
-      title: 'Error - Failed Quiz Check',
+    res.render("errorMessage", {
+      title: "Error - Failed Quiz Check",
+      message: "Failed User Guess Check",
+      link: "/plant-game",
       user: req.session.user,
       cssFiles: [],
     });
   }
+});
+
+/* Next Question Route */
+router.get("/next", async (req, res) => {
+  const plantName = await getRandomPlant(req);
+
+  const plantInfo = await PlantInfo.findOne({
+    plantId: plantName._id.toString(),
+  });
+
+  const plant = {
+    ...plantName.toObject(),
+    ...(plantInfo ? plantInfo.toObject() : {}),
+  };
+
+  req.session.currentPlantId = plantName._id.toString();
+  req.session.correctPlant = plantName.commonName;
+
+  res.render("guessPlant", {
+    title: "Guess The Plant",
+    user: req.session.user,
+    cssFiles: ["games.css"],
+    plant,
+    result: null,
+  });
 });
 
 module.exports = router;

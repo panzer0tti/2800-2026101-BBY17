@@ -1,0 +1,71 @@
+<%- include("templates/header.ejs", { title: title, user: user, cssFiles: cssFiles })%>
+
+<div class="container py-5">
+
+    <!-- Title -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Guess The Plant</h1>
+        <p class="text-muted">
+            Test your plant knowledge!
+        </p>
+    </div>
+
+    <!-- Quiz Card -->
+    <div class="card shadow-lg border-0 rounded-4 p-4 mx-auto"
+        style="max-width: 700px;"
+    >
+
+        <!-- Plant Image -->
+        <div class="text-center mb-4">
+            <img
+                src="<%= plant.imageUrl || '/img/placeholder.jpg' %>"
+                alt="Plant Image"
+                class="img-fluid rounded-4"
+                style="max-height: 350px; object-fit: cover;"
+            >
+        </div>
+
+        <!-- Optional Plant Clues -->
+        <% if (result) { %>
+            <p><strong>Scientific Name:</strong> <%= plant.scientificName %></p>
+            <p><strong>Family:</strong> <%= plant.family %></p>
+        <% } %>
+
+        <!-- Guess Form -->
+        <% if (!result) { %>
+            <form action="/plant-game/guess-plants/guess" method="post">
+                <div class="mb-3">
+                    <input
+                        type="text"
+                        name="userGuess"
+                        class="form-control form-control-lg"
+                        placeholder="Enter plant name..."
+                        required
+                    >
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg fw-bold">
+                        Submit Guess
+                    </button>
+                </div>
+            </form>
+        <% } %>
+
+        <!-- Result Message -->
+        <% if (result) { %>
+            <div class="alert alert-info text-center mt-4">
+                <%= result %>
+            </div>
+
+            <!-- NEXT QUESTION BUTTON -->
+            <div class="d-grid mt-3">
+                <a href="/plant-game/guess-plants/next" class="btn btn-primary btn-lg fw-bold">
+                    Next Plant
+                </a>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include("templates/footer.ejs")%>

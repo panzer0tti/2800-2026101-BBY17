@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const plantInfoSchema = new mongoose.Schema({
   plantId: {
@@ -16,9 +16,9 @@ const plantInfoSchema = new mongoose.Schema({
 
   difficulty: {
     type: String,
-    enum: ['easy', 'medium', 'hard'],
-    default: 'easy',
+    enum: ["easy", "medium", "hard"],
+    default: "easy",
   },
 });
 
-module.exports = mongoose.model('PlantInfo', plantInfoSchema, 'plant_info');
+module.exports = mongoose.model("PlantInfo", plantInfoSchema, "plant_info");

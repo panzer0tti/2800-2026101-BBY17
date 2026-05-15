@@ -31,7 +31,7 @@ const {signupSubmit, loginSubmit, backupLoginSubmit} = require("./public/js/auth
 const {displayUserInfo, updateUserInfo} = require("./public/js/profileData");
 const {verifyIdentity, changePasswordSubmit} = require("./public/js/changePassword");
 const gameManager = require("./public/js/gameManager");
-const { name } = require("ejs");
+// const { name } = require("ejs");
 
 function checkAuthentication(req, res, next) {
     if (!req.session.authenticated) {
@@ -47,6 +47,11 @@ function alreadyLoggedIn(req, res, next) {
         return;
     }
     next();
+}
+
+function HTMLRender(res, htmlPath) {
+    let html = fs.readFileSync(__dirname + "/app/html/" + htmlPath, "utf8");
+    res.send(html);
 }
 
 const navLinks = [
@@ -105,13 +110,15 @@ app.get("/backupLogin", alreadyLoggedIn, (req, res) => {
 app.post("/backupLoginSubmit", backupLoginSubmit);
 
 app.get("/home", checkAuthentication, (req, res) => {
-    let html = fs.readFileSync(__dirname + "/app/html/home.html", "utf8");
-    res.send(html);
+    HTMLRender(res, "home.html");
 });
 
 app.get("/plant-map", checkAuthentication, (req, res) => {
-    let html = fs.readFileSync(__dirname + "/app/html/plant-map.html", "utf8");
-    res.send(html);
+    HTMLRender(res, "plant-map.html");
+});
+
+app.get("/scan", checkAuthentication, (req, res) => {
+    HTMLRender(res, "scan.html");
 });
 
 app.use("/plant-game", gameManager);

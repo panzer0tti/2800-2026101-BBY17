@@ -105,9 +105,11 @@ function findPasswordError(newPassword, confirmPassword) {
 }
 
 function sendSuccessMessage(res, message, link) {
-    res.render("success-message", {
+    res.render("popup-message", {
         message: message,
-        link: link
+        link: link,
+        button: "Go to Profile",
+        alertType: "success"
     });
 }
 

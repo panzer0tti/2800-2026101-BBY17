@@ -1,5 +1,4 @@
 # 2800-202610-BBY17
-
 BeWilder is a project that aims to tackle food insecurity, community building, and much more!
 Stay tuned for updates.
 

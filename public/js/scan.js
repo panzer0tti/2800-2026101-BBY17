@@ -1,4 +1,4 @@
-const BoxPlantData = {
+const mockPlantData = {
     name: "Junberry",
     ripeStatus: "High (Deep Red)",
     inSeason: "Yes (May - July)",

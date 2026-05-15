@@ -170,7 +170,7 @@ function findLoginError(email, password) {
 
 function findBackupLoginError(email, question, answer) {
     let backupLoginError = [];
-    if (email.length == 0 || question.length == 0 || answer.length == 0) {
+    if (!question || email.length == 0 || question.length == 0 || answer.length == 0) {
         backupLoginError.push("Please fill in all fields.");
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

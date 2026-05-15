@@ -1,64 +1,97 @@
 <%- include("templates/header", {title: title, user: user, cssFiles: cssFiles}); %>
-<div class="container d-flex flex-column gap-5">
-  <div class="row justify-content-center">
-    <!-- Card 1 -->
-    <div class="col">
-      <div class="card p-3 h-100 w-100 shadow text-center">
-        <h2 class="mb-3 fw-bolder">Level: <%= player.level %></h2>
+<div class="container tw-py-10 tw-space-y-10">
+
+  <!-- LEVEL CARD -->
+  <div class="row tw-justify-center">
+    <div class="col-md-8">
+
+      <div class="card tw-p-6 tw-shadow-lg tw-text-center tw-rounded-2xl tw-border-0">
+
+        <h2 class="tw-mb-4 tw-font-bold tw-text-3xl tw-text-green-800">
+          Level: <%= player.level %>
+        </h2>
 
         <!-- EXP Bar -->
-        <div class="position-relative">
+        <div class="tw-relative">
+
           <!-- Progress Bar Background -->
-          <div class="progress" style="height: 35px">
+          <div class="progress tw-rounded-full" style="height: 35px;">
             <div
               class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-              style="--progress: <%= xpPercentage %>%"
+              style="width: <%= xpPercentage %>%"
             ></div>
           </div>
 
           <!-- Progress Bar Centered Text -->
-          <div
-            class="text-dark position-absolute top-50 start-50 translate-middle fw-bold fs-6"
-          >
-            <%= player.currentXP %>
-            /
-            <%= player.xpForNextLevel %>
-            EXP
+          <div class="tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw--translate-x-1/2 tw--translate-y-1/2 
+                      tw-font-bold tw-text-white tw-text-sm">
+            <%= player.currentXP %> / <%= player.xpForNextLevel %> EXP
           </div>
+
         </div>
-        <p class="mt-3"><%= remainingXP %> EXP until next level</p>
+
+        <p class="tw-mt-4 tw-text-gray-500">
+          <%= remainingXP %> EXP until next level
+        </p>
+
       </div>
     </div>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col">
-      <div class="card h-100 shadow text-center mb-4 gap-3">
-        <div
-          class="card-body d-flex flex-column justify-content-evenly align-items-center"
-        >
-          <button class="p-2 btn game-btns fw-bold">
+  <!-- GAME ACTIONS -->
+  <div class="row tw-justify-center">
+    <div class="col-md-8">
+
+      <div class="card tw-shadow-lg tw-border-0 tw-rounded-2xl tw-p-6 tw-text-center">
+
+        <div class="tw-flex tw-flex-col tw-gap-4 tw-items-center">
+
+          <button class="game-btns tw-font-bold tw-py-2 tw-px-4 tw-rounded-lg tw-transition hover:tw-scale-105">
             New Ranked Match Session
           </button>
-          <a class="p-2 btn game-btns fw-bold" href="/plant-game/guess-plants">
+
+          <a
+            href="/plant-game/guess-plants"
+            class="game-btns tw-font-bold tw-py-2 tw-px-4 tw-rounded-lg tw-inline-block tw-no-underline 
+                   tw-transition hover:tw-scale-105"
+          >
             Plant Knowledge Review
           </a>
-        </div>
-        <h2 class="fw-bold display-6">Match History</h2>
 
-        <% if (matches && matches.length > 0) { %> <% matches.forEach(match => {
-        %>
-        <div class="card mb-3">
-          <div class="card-body">
-            <h3><%= match.name %></h3>
-          </div>
         </div>
-        <% }) %>
+
+        <h2 class="tw-font-bold tw-text-4xl tw-mt-6 tw-text-green-900">
+          Match History
+        </h2>
+
+        <% if (matches && matches.length > 0) { %>
+
+          <div class="tw-mt-4 tw-space-y-3">
+
+            <% matches.forEach(match => { %>
+
+              <div class="card tw-border-0 tw-shadow-sm tw-rounded-xl tw-p-4 hover:tw-shadow-md tw-transition">
+                <div class="card-body">
+                  <h3 class="tw-text-lg tw-font-semibold">
+                    <%= match.name %>
+                  </h3>
+                </div>
+              </div>
+
+            <% }) %>
+
+          </div>
+
         <% } else { %>
-          <p>No match found.</p>
+          <p class="tw-text-gray-500 tw-mt-4">
+            No match found.
+          </p>
         <% } %>
+
       </div>
+
     </div>
   </div>
+
 </div>
 <%- include("templates/footer"); %>

@@ -1,13 +1,15 @@
 require("dotenv").config();
 // require("./public/js/utils.js");
 
+const fs = require("fs");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
+const mongoose = require("mongoose");
+const mongoSanitizer = require("mongo-sanitizer").default;
+
 const app = express();
 const PORT = process.env.PORT || 2800;
-
-const fs = require("fs");
 
 app.set("view engine", "ejs");
 
@@ -16,7 +18,6 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/app/html"));
 app.use(express.json());
 
-const mongoSanitizer = require("mongo-sanitizer").default;
 app.use(mongoSanitizer({ replaceWith: "_" }));
 
 const mongodb_user = process.env.MONGODB_USER;
@@ -24,8 +25,22 @@ const mongodb_password = process.env.MONGODB_PASSWORD;
 const mongodb_host = process.env.MONGODB_HOST;
 const mongodb_database = process.env.MONGODB_DATABASE;
 const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
-
 const node_session_secret = process.env.NODE_SESSION_SECRET;
+
+const mongoURL = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`;
+
+mongoose
+  .connect(mongoURL)
+  .then(() => {
+    console.log("MongoDB connected");
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection failed: ", err);
+  });
 
 const {
   signupSubmit,
@@ -73,7 +88,7 @@ const navLinks = [
 ];
 
 var mongoStore = MongoStore.create({
-  mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`,
+  mongoUrl: mongoURL,
   crypto: {
     secret: mongodb_session_secret,
   },
@@ -145,11 +160,7 @@ app.get("/scan", checkAuthentication, (req, res) => {
 });
 
 // Plant Games Page Route
-app.use("/plant-game", (req, res) => {
-  if (req.session.authenticated) {
-    gameManager;
-  }
-});
+app.use("/plant-game", checkAuthentication, gameManager);
 
 app.get("/profile", checkAuthentication, displayUserInfo);
 
@@ -185,8 +196,4 @@ app.use((req, res) => {
     user: req.session.user,
     cssFiles: [],
   });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });

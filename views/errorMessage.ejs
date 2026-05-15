@@ -1,0 +1,6 @@
+<%- include("templates/header", {title: title, user: user, cssFiles: cssFiles}) %>
+    <div class="alert alert-danger" role="alert">
+        <%= message %>
+    </div>
+    <a href='<%= link %>' class="btn btn-secondary">Try again</a>
+<%- include("templates/footer") %>

@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "build:css": "tailwindcss -i ./src/tailwindInput.css -o ./public/tailwindOutput.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +21,6 @@
   },
   "homepage": "https://github.com/panzer0tti/2800-202610-BBY17#readme",
   "dependencies": {
-    "@tailwindcss/vite": "^4.2.4",
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
     "connect-mongo": "^6.0.0",

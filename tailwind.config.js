@@ -6,7 +6,12 @@ module.exports = {
     preflight: false,
   },
 
-  content: ["./views/**/*.ejs", "./public/js/**/*.js"],
+  content: [
+    "./views/**/*.ejs",
+    "./public/**/*.html",
+    "./public/**/*.js",
+    "./app.js",
+  ],
 
   theme: {
     extend: {},

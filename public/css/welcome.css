@@ -1,0 +1,246 @@
+/*
+-----------------
+BeWilder Styling
+Home Page
+-----------------
+*/
+:root {
+  --bewilder-forest: #183821;
+  --bewilder-green: #2f6b3f;
+  --bewilder-light: #f4f7ef;
+  --bewilder-mint: #dff0d2;
+  --bewilder-gold: #f4d35e;
+  --bewilder-text: #1f2f23;
+}
+
+body {
+  background: var(--bewilder-light);
+  color: var(--bewilder-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.welcome-nav {
+  background: rgba(24, 56, 33, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.navbar-brand {
+  letter-spacing: 0.03rem;
+}
+
+.hero-section {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(244, 211, 94, 0.25),
+      transparent 28rem
+    ),
+    linear-gradient(135deg, #183821, #2f6b3f);
+  color: white;
+}
+
+.hero-kicker,
+.section-kicker {
+  color: var(--bewilder-gold);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  line-height: 0.95;
+  max-width: 11ch;
+}
+
+.hero-copy {
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 36rem;
+}
+
+.hero-warning {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 34rem;
+}
+
+.app-preview-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 2rem;
+  color: var(--bewilder-text);
+  padding: 1.25rem;
+}
+
+.preview-header {
+  display: flex;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.preview-dot {
+  background: #d6ded2;
+  border-radius: 50%;
+  display: inline-block;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.scan-preview {
+  background: linear-gradient(135deg, #f5fbef, #ffffff);
+  border: 1px solid #dce8d4;
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+}
+
+.confidence-bar {
+  background: #dce8d4;
+  border-radius: 999px;
+  height: 0.85rem;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  background: var(--bewilder-green);
+  border-radius: inherit;
+  height: 100%;
+  width: 82%;
+}
+
+.safety-note {
+  color: #5c6d60;
+  font-size: 0.95rem;
+}
+
+.mini-card {
+  background: #f4f7ef;
+  border: 1px solid #dce8d4;
+  border-radius: 1.25rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.mini-number {
+  color: var(--bewilder-green);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.mini-label {
+  color: #5c6d60;
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: var(--bewilder-forest);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+}
+
+.section-copy {
+  color: #5c6d60;
+  font-size: 1.05rem;
+}
+
+.feature-card {
+  background: white;
+  border: 1px solid #dce8d4;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  box-shadow: 0 1rem 2rem rgba(24, 56, 33, 0.12);
+  transform: translateY(-0.25rem);
+}
+
+.feature-card h3 {
+  color: var(--bewilder-forest);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.feature-card p {
+  color: #5c6d60;
+  margin-bottom: 0;
+}
+
+.feature-icon {
+  align-items: center;
+  background: var(--bewilder-mint);
+  border-radius: 999px;
+  color: var(--bewilder-green);
+  display: flex;
+  font-weight: 800;
+  height: 2.75rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 2.75rem;
+}
+
+.how-section {
+  background: white;
+}
+
+.step-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.step-item {
+  align-items: center;
+  background: var(--bewilder-light);
+  border: 1px solid #dce8d4;
+  border-radius: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.step-item span {
+  align-items: center;
+  background: var(--bewilder-green);
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  flex: 0 0 2.5rem;
+  font-weight: 800;
+  height: 2.5rem;
+  justify-content: center;
+}
+
+.step-item p {
+  color: #405345;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.safety-callout {
+  background: #fff8e1;
+  border: 1px solid #ecd27d;
+  border-radius: 1.5rem;
+  padding: 2rem;
+}
+
+.safety-callout .section-kicker {
+  color: #8a6500;
+}
+
+.safety-callout h2 {
+  color: #4e3a00;
+  font-weight: 800;
+}
+
+.safety-callout p {
+  color: #67541a;
+}
+
+footer {
+  background: white;
+  border-top: 1px solid #dce8d4;
+}
+

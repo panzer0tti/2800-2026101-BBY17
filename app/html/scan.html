@@ -48,6 +48,46 @@
             <p>Latitude: <span id="lat-display">0.0000</span></p>
             <p>Longitude: <span id="lng-display">0.0000</span></p>
          </div>
+         <div id="ai-checklist" class="checklist-section">
+    <hr class="divider">
+    <h3 class="checklist-title">✨ AI Safety Analysis</h3>
+    
+    <div class="checklist-grid">
+        <div class="check-item">
+            <span class="check-icon">🛡️</span>
+            <div class="check-info">
+                <label>Safety Status</label>
+                <span id="ai-safety-val" class="status-badge">Awaiting Scan...</span>
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="check-icon">🍴</span>
+            <div class="check-info">
+                <label>Edibility Score</label>
+                <span id="ai-edibility-val" class="stars">☆☆☆☆☆</span>
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="check-icon">🌿</span>
+            <div class="check-info">
+                <label>Growth Stage</label>
+                <span id="ai-growth-val">--</span>
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="check-icon">🤖</span>
+            <div class="check-info">
+                <label>AI Confidence</label>
+                <div class="confidence-bar-bg">
+                    <div id="ai-confidence-bar" class="confidence-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
       </div>
 
       <p id="lookalike-warning"></p>

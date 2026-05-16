@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>BeWilder | Scan Plant</title>
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+   <header>
+      <div id="navigation">
+         <div id="home_icon"></div>
+         <nav>
+            <strong>BeWilder</strong>
+            <a href="/home" id="nav-home">Home</a>
+            <a href="/plant-map" id="nav-scan">Plant Map</a>
+            <a href="/plant-game" id="nav-berry">Berry Guess</a>
+         </nav>
+      </div>
+      <div id="logo"><span id="busy-city-guide"></span>
+         <div id="top-right-icon"></div>
+      </div>
+   </header>
+
+   <figure id="centre">
+       <video id="video" width="100%" autoplay playsinline></video>
+
+      <!-- Hidden canvas to capture the image -->
+      <canvas id="canvas" style="display:none;"></canvas>
+
+      <div id="scan-controls">
+         
+<button id="start-camera">Start Camera</button>
+<button id="capture-plant">Capture Plant</button>
+<button id="back" style="display: none;">Back</button>
+      </div>
+
+      <div id="result-box" style="display: none;">
+        <h2 id="plant-name"></h2>
+        <p id="ripe-level"></p>
+        <p id="season-indicator"></p>
+        <div id="safety-badge"></div>
+        <p id="confidence-level"></p>
+    </div>
+
+    <p id="lookalike-warning"></p>
+    <p id="allergy-warning"></p>
+    <div id="prep-guide">
+        <strong>Preparation:</strong>
+        <p></p>
+    </div>
+</div>
+
+    <figcaption>
+        <div id="results">Ready to scan...</div>
+    </figcaption>
+</figure>
+
+      <figcaption>
+         <div id="results">Scanning...</div>
+         <!-- Keep your existing obj-i, obj-ii divs if you need them for styling -->
+      </figcaption>
+   </figure>
+   <div id="below">
+      <section id="roads-html">
+
+
+      </section>
+
+      <section id="roads-json">
+
+      </section>
+   </div>
+   <div class="website-content"></div>
+   <script src="/js/scan.js"></script>
+</body>
+
+</html>

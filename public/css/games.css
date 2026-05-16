@@ -1,0 +1,18 @@
+/* Custom styles can be added here */
+.game-btns {
+  background-color: #497150;
+  color: #121d14;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.game-btns:hover {
+  background-color: #213123;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* smoother progress bar */
+.progress-bar {
+  transition: width 0.6s ease;
+}

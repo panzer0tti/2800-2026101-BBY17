@@ -14,44 +14,52 @@ async function signupSubmit(req, res) {
     var name = req.body.name;
     var email = req.body.email;
     var password = req.body.password;
+    var question = req.body.question;
+    var answer = req.body.answer;
 
     const schema = Joi.object({
         name: Joi.string().max(20).required(),
         email: Joi.string().email().required(),
-        password: Joi.string().min(8).max(64).pattern(/[A-Z]/)
-                     .pattern(/[a-z]/).pattern(/[0-9]/).required()
+        password: Joi.string().min(8).max(20).pattern(/[A-Z]/)
+                     .pattern(/[a-z]/).pattern(/[0-9]/).required(),
+        question: Joi.string().required(),
+        answer: Joi.string().max(20).required()
     });
 
-    const validationResult = schema.validate({name, email, password});
+    const validationResult = schema.validate({name, email, password, question, answer});
     if (validationResult.error != null) {
-        res.send(`Error: ${validationResult.error.message}. <a href='/signup'>Try again</a>`);
+        const signupError = findSignupError(name, email, password, question, answer);
+        sendErrorMessage(req, res, "Signup Error", signupError, "/signup", "Signup");
         return;
     }
 
     const existingUser = await userCollection.findOne({email: email});
     if (existingUser) {
-        res.send(`Email is already in use. <a href='/signup'>Try again</a>`);
+        sendErrorMessage(req, res, "Signup Error", ["Email is already in use."], "/signup", "Signup");
         return;
     }
 
-    var hashedPassword = await bcrypt.hash(password, saltRounds);
-    await userCollection.insertOne({name: name, email: email, password: hashedPassword, firstTime: true});
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedAnswer = await bcrypt.hash(answer, saltRounds);
+    await userCollection.insertOne({name: name.trim(), email: email, password: hashedPassword, question: question, answer: hashedAnswer, firstTime: true});
 
-    req.session.authenticated = true;
-    req.session.name = name;
-    req.session.firstTime = true;
-    req.session.cookie.maxAge = expireTime;
-    res.redirect('/members');
+    makeNewSession(req, name.trim(), email, true);
+    res.redirect('/home');
 }
 
 async function loginSubmit(req, res) {
     var email = req.body.email;
     var password = req.body.password;
 
-    const schema = Joi.string().email().required();
-    const validationResult = schema.validate(email);
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().required()
+    });
+    
+    const validationResult = schema.validate({email, password});
     if (validationResult.error != null) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        const loginError = findLoginError(email, password);
+        sendErrorMessage(req, res, "Login Error", loginError, "/login", "Login");
         return;
     }
 
@@ -60,29 +68,143 @@ async function loginSubmit(req, res) {
                                        .toArray();
 
     if (result.length == 0) {
-        res.send("User not found. <a href='/login'>Try again</a>");
+        sendErrorMessage(req, res, "Login Error", ["User not found."], "/login", "Login");
         return;
     }
 
     if (await bcrypt.compare(password, result[0].password)) {
-        req.session.authenticated = true;
-        req.session.name = result[0].name;
-        req.session.cookie.maxAge = expireTime;
-
         if (result[0].firstTime) {
             await userCollection.updateOne({email: email}, {$set: {firstTime: false}});
         }
 
-        req.session.firstTime = result[0].firstTime;
-        res.redirect('/members');
+        const sessionName = result[0].name;
+        const sessionEmail = result[0].email;
+        makeNewSession(req, sessionName, sessionEmail, false);
+        res.redirect('/home');
     } else {
-        res.send("Invalid password. <a href='/login'>Try again</a>");
+        sendErrorMessage(req, res, "Login Error", ["Incorrect password."], "/login", "Login");
     }
 }
 
-function logout(req, res) {
-    req.session.destroy();
-    res.redirect('/');
+async function backupLoginSubmit(req, res) {
+    var email = req.body.email;
+    var question = req.body.question;
+    var answer = req.body.answer;
+
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        question: Joi.string().required(),
+        answer: Joi.string().max(20).required()
+    });
+    
+    const validationResult = schema.validate({email, question, answer});
+    if (validationResult.error != null) {
+        const backupLoginError = findBackupLoginError(email, question, answer);
+        sendErrorMessage(req, res, "Backup Login Error", backupLoginError, "/backupLogin", "Backup Login");
+        return;
+    }
+
+    const result = await userCollection.find({email: email})
+                                       .project({email: 1, question: 1, answer: 1, _id: 1})
+                                       .toArray();
+    
+    if (result.length == 0) {
+        sendErrorMessage(req, res, "Backup Login Error", ["User not found."], "/backupLogin", "Backup Login");
+        return;
+    }
+
+    if (result[0].question !== question) {
+        sendErrorMessage(req, res, "Backup Login Error", ["Incorrect security question."], "/backupLogin", "Backup Login");
+        return;
+    }
+
+    if (await bcrypt.compare(answer, result[0].answer)) {
+        const sessionName = result[0].name;
+        const sessionEmail = result[0].email;
+        makeNewSession(req, sessionName, sessionEmail, false);
+        res.redirect('/home');
+    } else {
+        sendErrorMessage(req, res, "Backup Login Error", ["Incorrect answer."], "/backupLogin", "Backup Login");
+    }
 }
 
-module.exports = {signupSubmit,loginSubmit,logout};
+function findSignupError(name, email, password, question, answer) {
+    let signupError = [];
+    if (!question || emptyEntrySubmitted(name, email, password, question, answer)) {
+        signupError.push("Please fill in all fields.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        signupError.push("Please enter a valid email address.");
+    }
+    if (name.length > 20) {
+        signupError.push("Name must be less than 20 characters.");
+    }
+    if (answer.length > 20) {
+        signupError.push("Answer must be less than 20 characters.");
+    }
+    if (password.length < 8 || password.length > 20) {
+        signupError.push("Password must be between 8 and 20 characters.");
+    }
+    if (!/[A-Z]/.test(password)) {
+        signupError.push("Password must contain at least one uppercase letter.");
+    }
+    if (!/[a-z]/.test(password)) {
+        signupError.push("Password must contain at least one lowercase letter.");
+    }
+    if (!/[0-9]/.test(password)) {
+        signupError.push("Password must contain at least one digit.");
+    }
+    return signupError || null;
+}
+
+function findLoginError(email, password) {
+    let loginError = [];
+    if (email.length == 0 || password.length == 0) {
+        loginError.push("Please fill in all fields.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        loginError.push("Please enter a valid email address.");
+    }
+    return loginError || null;
+}
+
+function findBackupLoginError(email, question, answer) {
+    let backupLoginError = [];
+    if (!question || email.length == 0 || question.length == 0 || answer.length == 0) {
+        backupLoginError.push("Please fill in all fields.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        backupLoginError.push("Please enter a valid email address.");
+    }
+    return backupLoginError || null;
+}
+
+function emptyEntrySubmitted(name, email, password, question, answer) {
+    return name.length == 0 ||
+           email.length == 0 ||
+           password.length == 0 ||
+           question.length == 0 ||
+           answer.length == 0;
+}
+
+function sendErrorMessage(req, res, title, message, link, button) {
+    res.render("popup-message", {
+        title: title,
+        message: message,
+        link: link,
+        button: "Back to " + button,
+        alertType: "danger",
+        user: req.session.authenticated,
+        cssFiles: []
+    });
+}
+
+function makeNewSession(req, name, email, firstTime) {
+    req.session.authenticated = true;
+    req.session.name = name;
+    req.session.email = email;
+    req.session.firstTime = firstTime;
+    req.session.cookie.maxAge = expireTime;
+}
+
+module.exports = {signupSubmit, loginSubmit, backupLoginSubmit, sendErrorMessage};

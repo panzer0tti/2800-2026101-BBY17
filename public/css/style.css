@@ -486,3 +486,59 @@ footer {
 #upload-label:hover {
     background-color: #45a049;
 }
+
+/* Container for alignment */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Base button styles */
+button {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  width: 100%;
+  text-align: center;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Specific button styles */
+#start-camera {
+  background-color: #2e7d32; /* Nature Green */
+  color: #ffffff;
+}
+
+#start-camera:hover {
+  background-color: #1b5e20;
+}
+
+#capture-plant {
+  background-color: #0288d1; /* Sky Blue */
+  color: #ffffff;
+}
+
+#capture-plant:hover {
+  background-color: #01579b;
+}
+
+#back {
+  background-color: #e0e0e0; /* Light Gray */
+  color: #333333;
+}
+
+#back:hover {
+  background-color: #bdbdbd;
+}

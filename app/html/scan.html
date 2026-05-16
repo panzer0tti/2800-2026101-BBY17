@@ -36,6 +36,8 @@
          <button id="start-camera">Start Camera</button>
          <button id="capture-plant">Capture Plant</button>
          <button id="back" style="display: none;">Back</button>
+         <input type="file" id="upload-plant" accept="image/*" style="display: none;">
+         <label id="upload-label" for="upload-plant" class="btn-style">Upload Photo</label>
       </div>
 
       <div id="result-box" style="display: none;">
@@ -49,45 +51,45 @@
             <p>Longitude: <span id="lng-display">0.0000</span></p>
          </div>
          <div id="ai-checklist" class="checklist-section">
-    <hr class="divider">
-    <h3 class="checklist-title">✨ AI Safety Analysis</h3>
-    
-    <div class="checklist-grid">
-        <div class="check-item">
-            <span class="check-icon">🛡️</span>
-            <div class="check-info">
-                <label>Safety Status</label>
-                <span id="ai-safety-val" class="status-badge">Awaiting Scan...</span>
-            </div>
-        </div>
+            <hr class="divider">
+            <h3 class="checklist-title">✨ AI Safety Analysis</h3>
 
-        <div class="check-item">
-            <span class="check-icon">🍴</span>
-            <div class="check-info">
-                <label>Edibility Score</label>
-                <span id="ai-edibility-val" class="stars">☆☆☆☆☆</span>
-            </div>
-        </div>
+            <div class="checklist-grid">
+               <div class="check-item">
+                  <span class="check-icon">🛡️</span>
+                  <div class="check-info">
+                     <label>Safety Status</label>
+                     <span id="ai-safety-val" class="status-badge">Awaiting Scan...</span>
+                  </div>
+               </div>
 
-        <div class="check-item">
-            <span class="check-icon">🌿</span>
-            <div class="check-info">
-                <label>Growth Stage</label>
-                <span id="ai-growth-val">--</span>
-            </div>
-        </div>
+               <div class="check-item">
+                  <span class="check-icon">🍴</span>
+                  <div class="check-info">
+                     <label>Edibility Score</label>
+                     <span id="ai-edibility-val" class="stars">☆☆☆☆☆</span>
+                  </div>
+               </div>
 
-        <div class="check-item">
-            <span class="check-icon">🤖</span>
-            <div class="check-info">
-                <label>AI Confidence</label>
-                <div class="confidence-bar-bg">
-                    <div id="ai-confidence-bar" class="confidence-bar-fill" style="width: 0%"></div>
-                </div>
+               <div class="check-item">
+                  <span class="check-icon">🌿</span>
+                  <div class="check-info">
+                     <label>Growth Stage</label>
+                     <span id="ai-growth-val">--</span>
+                  </div>
+               </div>
+
+               <div class="check-item">
+                  <span class="check-icon">🤖</span>
+                  <div class="check-info">
+                     <label>AI Confidence</label>
+                     <div class="confidence-bar-bg">
+                        <div id="ai-confidence-bar" class="confidence-bar-fill" style="width: 0%"></div>
+                     </div>
+                  </div>
+               </div>
             </div>
-        </div>
-    </div>
-</div>
+         </div>
       </div>
 
       <p id="lookalike-warning"></p>

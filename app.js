@@ -229,11 +229,8 @@ app.post('/api/scan', upload.single('plantImage'), async (req, res) => {
     }
 });
 
+// 404 Page-not-found Error Page
 app.use((req, res) => {
-    res.status(404);
-    res.render("404");
-});
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  res.status(404);
+  renderPage(req, res, "404", "404 - Page not found");
 });

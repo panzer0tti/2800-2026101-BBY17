@@ -5,24 +5,31 @@ const router = express.Router();
 
 // Game's Main Page
 router.get("/", (req, res) => {
-  if (req.session.authenticated) {
-    const player = {
-      level: 12,
-      currentExp: 1200,
-      expToNextLevel: 1500,
-    };
+  const player = {
+    level: 12,
+    currentExp: 1200,
+    expToNextLevel: 1500,
+  };
 
-    const xpPercentage = (player.currentExp / player.expToNextLevel) * 100;
+  const xpPercentage = (player.currentExp / player.expToNextLevel) * 100;
 
-    const remainingXP = player.expToNextLevel - player.currentExp;
+  const remainingXP = player.expToNextLevel - player.currentExp;
 
-    res.render("games", {
-      player,
-      xpPercentage,
-      remainingXP,
-      matches: [],
-    });
-  }
+  res.render("games", {
+    title: "Plant Games",
+    user: req.session.authenticated,
+    cssFiles: ["games.css"],
+    player,
+    xpPercentage,
+    remainingXP,
+    matches: [],
+  });
 });
+
+// Plant Quiz Game Route
+const guessPlantsGame = require("./guessPlantsGame.js");
+router.use("/guess-plants", guessPlantsGame);
+
+// Ranked Match Game Route
 
 module.exports = router;

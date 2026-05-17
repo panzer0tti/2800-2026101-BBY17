@@ -26,43 +26,89 @@
    </header>
 
    <figure id="centre">
-       <video id="video" width="100%" autoplay playsinline></video>
+      <video id="video" width="100%" autoplay playsinline></video>
 
       <!-- Hidden canvas to capture the image -->
       <canvas id="canvas" style="display:none;"></canvas>
 
       <div id="scan-controls">
-         
-<button id="start-camera">Start Camera</button>
-<button id="capture-plant">Capture Plant</button>
-<button id="back" style="display: none;">Back</button>
+
+         <button id="start-camera">Start Camera</button>
+         <button id="capture-plant">Capture Plant</button>
+         <button id="back" style="display: none;">Back</button>
+         <input type="file" id="upload-plant" accept="image/*" style="display: none;">
+         <label id="upload-label" for="upload-plant" class="btn-style">Upload Photo</label>
       </div>
 
       <div id="result-box" style="display: none;">
-        <h2 id="plant-name"></h2>
-        <p id="ripe-level"></p>
-        <p id="season-indicator"></p>
-        <div id="safety-badge"></div>
-        <p id="confidence-level"></p>
-    </div>
+         <h2 id="plant-name"></h2>
+         <p id="ripe-level"></p>
+         <p id="season-indicator"></p>
+         <div id="safety-badge"></div>
+         <p id="confidence-level"></p>
+         <div id="location-display">
+            <p>Latitude: <span id="lat-display">0.0000</span></p>
+            <p>Longitude: <span id="lng-display">0.0000</span></p>
+         </div>
+         <div id="ai-checklist" class="checklist-section">
+            <hr class="divider">
+            <h3 class="checklist-title">✨ AI Safety Analysis</h3>
 
-    <p id="lookalike-warning"></p>
-    <p id="allergy-warning"></p>
-    <div id="prep-guide">
-        <strong>Preparation:</strong>
-        <p></p>
-    </div>
-</div>
+            <div class="checklist-grid">
+               <div class="check-item">
+                  <span class="check-icon">🛡️</span>
+                  <div class="check-info">
+                     <label>Safety Status</label>
+                     <span id="ai-safety-val" class="status-badge">Awaiting Scan...</span>
+                  </div>
+               </div>
 
-    <figcaption>
-        <div id="results">Ready to scan...</div>
-    </figcaption>
-</figure>
+               <div class="check-item">
+                  <span class="check-icon">🍴</span>
+                  <div class="check-info">
+                     <label>Edibility Score</label>
+                     <span id="ai-edibility-val" class="stars">☆☆☆☆☆</span>
+                  </div>
+               </div>
+
+               <div class="check-item">
+                  <span class="check-icon">🌿</span>
+                  <div class="check-info">
+                     <label>Growth Stage</label>
+                     <span id="ai-growth-val">--</span>
+                  </div>
+               </div>
+
+               <div class="check-item">
+                  <span class="check-icon">🤖</span>
+                  <div class="check-info">
+                     <label>AI Confidence</label>
+                     <div class="confidence-bar-bg">
+                        <div id="ai-confidence-bar" class="confidence-bar-fill" style="width: 0%"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <p id="lookalike-warning"></p>
+      <p id="allergy-warning"></p>
+      <div id="prep-guide">
+         <strong>Preparation:</strong>
+         <p></p>
+      </div>
+      </div>
 
       <figcaption>
-         <div id="results">Scanning...</div>
-         <!-- Keep your existing obj-i, obj-ii divs if you need them for styling -->
+         <div id="results">Ready to scan...</div>
       </figcaption>
+   </figure>
+
+   <figcaption>
+      <div id="results">Scanning...</div>
+      <!-- Keep your existing obj-i, obj-ii divs if you need them for styling -->
+   </figcaption>
    </figure>
    <div id="below">
       <section id="roads-html">

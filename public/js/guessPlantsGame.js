@@ -70,8 +70,8 @@ router.get("/", async (req, res) => {
       title: "Guess The Plant",
       user: req.session.authenticated,
       cssFiles: ["games.css"],
-      plant,
-      result: null,
+      plant: plant,
+      result: null
     });
   } catch (err) {
     console.error(err);
@@ -117,8 +117,8 @@ router.post("/guess", async (req, res) => {
       title: "Guess The Plant",
       user: req.session.authenticated,
       cssFiles: ["games.css"],
-      plant,
-      result,
+      plant: plant,
+      result: result
     });
   } catch (err) {
     console.error(err);
@@ -146,8 +146,8 @@ router.get("/next", async (req, res) => {
     title: "Guess The Plant",
     user: req.session.authenticated,
     cssFiles: ["games.css"],
-    plant,
-    result: null,
+    plant: plant,
+    result: null
   });
 });
 

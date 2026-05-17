@@ -9,20 +9,14 @@ const mongoSanitizer = require("mongo-sanitizer").default;
 const app = express();
 const PORT = process.env.PORT || 2800;
 
-const fs = require("fs");
-const multer = require('multer');
-const axios = require('axios');
-
-const upload = multer({ dest: 'uploads/' });
-
 app.set("view engine", "ejs");
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/app/html"));
 app.use(express.json());
 
-app.use(mongoSanitizer({ replaceWith: "_" }));
+app.use(mongoSanitizer({replaceWith: "_"}));
 
 const mongodb_user = process.env.MONGODB_USER;
 const mongodb_password = process.env.MONGODB_PASSWORD;
@@ -33,46 +27,46 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 
 const mongoURL = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`;
 
-mongoose
-  .connect(mongoURL)
-  .then(() => {
-    console.log("MongoDB connected");
+mongoose.connect(mongoURL)
+    .then(() => {
+        console.log("MongoDB is connected to the server.");
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+        app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error("MongoDB connection failed: ", err);
     });
-  })
-  .catch((err) => {
-    console.error("MongoDB connection failed: ", err);
-  });
 
-const {checkAuthentication, alreadyLoggedIn,
-       renderPage, HTMLRender} = require("./public/js/appHelper");
-const {signupSubmit, loginSubmit,
-       backupLoginSubmit} = require("./public/js/authentication");
+const {checkAuthentication, alreadyLoggedIn} = require("./public/js/appHelper");
+const {renderPage, HTMLRender} = require("./public/js/appHelper");
+const {signupSubmit, loginSubmit} = require("./public/js/authentication");
+const {backupLoginSubmit} = require("./public/js/authentication");
 const {displayUserInfo, updateUserInfo} = require("./public/js/profileData");
 const {verifyIdentity, changePasswordSubmit} = require("./public/js/changePassword");
+const {apiScan} = require("./public/js/plantScanAPI");
 const gameManager = require("./public/js/gameManager");
 
 // const {title} = require("process");
 // console.log(title);
 
 const navLinksUnauth = [
-  { name: "Welcome", url: "/" },
-  { name: "Sign Up", url: "/signup" },
-  { name: "Log In", url: "/login" },
-  { name: "Backup Log In", url: "/backupLogin" },
+  {name: "Welcome", url: "/"},
+  {name: "Sign Up", url: "/signup"},
+  {name: "Log In", url: "/login"},
+  {name: "Backup Log In", url: "/backupLogin"}
 ];
 
 const navLinksAuth = [
-  { name: "Home", url: "/home" },
-  { name: "Scan Plant", url: "/scan" },
-  { name: "Plant Map", url: "/plant-map" },
-  { name: "My Plants", url: "/my-plants" },
-  { name: "Encyclopedia", url: "/encyclopedia" },
-  { name: "Plant Games", url: "/plant-game" },
-  { name: "Profile", url: "/profile" },
-  { name: "Logout", url: "/logout" },
+  {name: "Home", url: "/home"},
+  {name: "Scan Plant", url: "/plant-scan"},
+  {name: "Plant Map", url: "/plant-map"},
+  {name: "My Plants", url: "/my-plants"},
+  {name: "Encyclopedia", url: "/encyclopedia"},
+  {name: "Plant Games", url: "/plant-game"},
+  {name: "Profile", url: "/profile"},
+  {name: "Logout", url: "/logout"}
 ];
 
 app.use((req, res, next) => {
@@ -140,9 +134,12 @@ app.get("/plant-map", checkAuthentication, (req, res) => {
 });
 
 // Static Plant Scan Page Route
-app.get("/scan", checkAuthentication, (req, res) => {
-  HTMLRender(res, "scan.html");
+app.get("/plant-scan", checkAuthentication, (req, res) => {
+  HTMLRender(res, "plant-scan.html");
 });
+
+// Plant Scan API Route
+app.post('/scanningPlant', apiScan);
 
 // Plant Games Page Route
 app.use("/plant-game", checkAuthentication, gameManager);
@@ -173,60 +170,6 @@ app.post("/changePasswordFormSubmit", checkAuthentication, changePasswordSubmit)
 app.get("/logout", (req, res) => {
   req.session.destroy();
   res.redirect("/");
-});
-
-app.post('/api/scan', upload.single('plantImage'), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ name: "Error", prep: "No image file was received by the server." });
-        }
-
-        // ADDED THIS LINE: Require form-data package
-        const FormData = require('form-data'); 
-
-        // Prepare the image file for Pl@ntNet
-        const imageStream = fs.createReadStream(req.file.path);
-        const formData = new FormData();
-        formData.append('images', imageStream);
-
-        const apiKey = process.env.PLANTNET_API_KEY || 'YOUR_PLANTNET_API_KEY'; 
-        
-        const plantNetResponse = await axios.post(
-            `https://my-api.plantnet.org/v2/identify/all?api-key=${apiKey}`,
-            formData,
-            // FIXED THIS LINE: Use formData.getHeaders() for Node.js
-            { headers: formData.getHeaders() } 
-        );
-
-        // Delete temporary file from our uploads folder
-        fs.unlinkSync(req.file.path);
-
-        const bestMatch = plantNetResponse.data.results[0];
-        const speciesName = bestMatch.species.scientificNameWithoutAuthor;
-        const confidenceScore = Math.round(bestMatch.score * 100) + "%";
-
-        const realPlantData = {
-            name: speciesName, 
-            ripeStatus: "Determined by species", 
-            inSeason: "Check local climate",
-            safety: bestMatch.score > 0.5 ? "Verified Species" : "Uncertain Match",
-            confidence: confidenceScore, 
-            lookalike: "Cross-referencing database...",
-            allergy: "Handle with standard caution",
-            prep: "Always cross-reference wild plants with an expert guide before consuming."
-        };
-
-        res.json(realPlantData);
-
-    } catch (err) {
-        console.error("Pl@ntNet API Error:", err.response ? err.response.data : err.message);
-        
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-
-        res.status(500).json({ name: "Scan Failed", prep: "The AI service was unable to identify this image." });
-    }
 });
 
 // 404 Page-not-found Error Page

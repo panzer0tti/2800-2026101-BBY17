@@ -19,10 +19,10 @@ router.get("/", (req, res) => {
     title: "Plant Games",
     user: req.session.authenticated,
     cssFiles: ["games.css"],
-    player,
-    xpPercentage,
-    remainingXP,
-    matches: [],
+    player: player,
+    xpPercentage: xpPercentage,
+    remainingXP: remainingXP,
+    matches: []
   });
 });
 

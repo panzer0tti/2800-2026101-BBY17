@@ -133,13 +133,13 @@ app.get("/plant-map", checkAuthentication, (req, res) => {
   HTMLRender(res, "plant-map.html");
 });
 
-// Static Plant Scan Page Route
+// Static Plant Scan Page HTML Route
 app.get("/plant-scan", checkAuthentication, (req, res) => {
   HTMLRender(res, "plant-scan.html");
 });
 
 // Plant Scan API Route
-app.post('/scanningPlant', apiScan);
+app.post("/scanningPlant", checkAuthentication, apiScan);
 
 // Plant Games Page Route
 app.use("/plant-game", checkAuthentication, gameManager);
@@ -172,7 +172,7 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// 404 Page-not-found Error Page
+// 404 Page-not-found Page
 app.use((req, res) => {
   res.status(404);
   renderPage(req, res, "404", "404 - Page not found");

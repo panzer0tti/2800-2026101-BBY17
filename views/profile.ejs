@@ -10,21 +10,21 @@
                                 <strong>Name</strong>
                             </label>
                             <input type="text" id="nameInput" class="form-control"
-                                name="name" placeholder="Enter your name" value="<%= name %>" required />
+                                name="name" placeholder="Enter your name" value="<%= userData.name %>" required />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">
                                 <strong>Location</strong>
                             </label>
                             <input type="text" id="locationInput" class="form-control"
-                                name="location" placeholder="Eg. Vancouver" value="<%= location %>" />
+                                name="location" placeholder="Eg. Vancouver" value="<%= userData.location %>" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">
                                 <strong>Phone Number</strong>
                             </label>
                             <input type="text" id="phoneInput" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
-                                name="phoneNum" placeholder="Eg. 123-456-7890" value="<%= phoneNum %>" />
+                                name="phoneNum" placeholder="Eg. 123-456-7890" value="<%= userData.phoneNum %>" />
                         </div>
                     </fieldset>
                     <div class="d-flex gap-2 mt-4">

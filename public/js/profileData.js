@@ -5,20 +5,19 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 
 const {database} = require('./mongoDBConnection');
 const {sendErrorMessage} = require('./authentication');
+const {renderPage} = require('./appHelper');
 const userCollection = database.db(mongodb_database).collection('users');
 
 async function displayUserInfo(req, res) {
     const email = req.session.email;
     const user = await userCollection.findOne({email: email});
-    res.render("profile", {
-        title: "Profile",
-        user: req.session.authenticated,
-        cssFiles: [],
+    const userData = {
         name: user.name,
         location: user.city,
-        phoneNum: user.phoneNum,
-        jsFile: "profile.js"
-    });
+        phoneNum: user.phoneNum
+    };
+
+    renderPage(req, res, "profile", "Profile", [], ["profile.js"], userData);
 }
 
 async function updateUserInfo(req, res) {

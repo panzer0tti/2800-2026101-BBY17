@@ -17,11 +17,13 @@ function alreadyLoggedIn(req, res, next) {
     next();
 }
 
-function renderPage(req, res, page, title, cssFiles = []) {
+function renderPage(req, res, page, title, cssFiles = [], jsFiles = [], userData = {}) {
     res.render(page, {
         title: title,
         user: req.session.authenticated,
-        cssFiles: cssFiles
+        cssFiles: cssFiles,
+        jsFiles: jsFiles,
+        userData: userData
     });
 }
 

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BeWilder</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { height: 100dvh; display: flex; flex-direction: column; }
@@ -95,7 +94,7 @@
 <nav>
   <strong><a href="/home">BeWilder</a></strong>
   <a href="/home" id="nav-home">Home</a>
-  <a href="/scan" id="nav-scan">Scan Plant</a>
+  <a href="/plant-scan" id="nav-scan">Scan Plant</a>
   <a href="/plant-game" id="nav-berry">Berry Guess</a>
 </nav>
 
@@ -124,6 +123,7 @@
 
 <div class="tooltip" id="tooltip" style="display:none"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 
 const isFirstVisit = !localStorage.getItem('BeWilder_visited');

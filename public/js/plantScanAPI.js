@@ -38,12 +38,10 @@ const apiScan = [
             fs.unlinkSync(req.file.path);
 
             const bestMatch = plantNetResponse.data.results[0];
+            const commonName = bestMatch.species.commonNames?.[0] || "Unknown common name";
             const speciesName = bestMatch.species.scientificNameWithoutAuthor;
             const confidenceScore = Math.round(bestMatch.score * 100) + "%";
-
-            const commonName = bestMatch.species.commonNames?.[0] || "Unknown common name";
-            console.log(commonName); // TEST
-
+            
             const plantData = {
                 commonName: commonName,
                 speciesName: speciesName,

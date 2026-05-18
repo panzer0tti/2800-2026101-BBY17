@@ -39,7 +39,6 @@ captureBtn.addEventListener('click', async () => {
 
         // 4. Populate your UI elements dynamically using the live server data
         updatePlantUI(livePlantData);
-
     } catch (err) {
         console.error("Failed to fetch live AI data:", err);
         showScanError();
@@ -88,7 +87,6 @@ uploadInput.addEventListener('change', async (event) => {
         
         // Pass server data to our reusable helper function
         updatePlantUI(livePlantData);
-
     } catch (err) {
         console.error(err);
         showScanError();
@@ -121,14 +119,12 @@ function showScanError(message = "Scan Failed") {
 async function scanPlant(options = {}) {
     try {
         const response = await fetch('/scanningPlant', options);
-
         if (!response.ok) {
             throw new Error('API error');
         }
 
         const data = await response.json();
         return data;
-
     } catch (err) {
         console.error("Scan API error:", err);
     }

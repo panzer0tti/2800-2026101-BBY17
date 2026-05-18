@@ -17,7 +17,9 @@ const apiScan = [
     async (req, res) => {
         try {
             if (!req.file) {
-                return res.status(400).json({name: "Error", prep: "No image file was received by the server."});
+                res.status(400);
+                res.json({name: "Error", prep: "No image file was received by the server."});
+                return;
             }
 
             // Prepare the image file for Pl@ntNet
@@ -63,7 +65,8 @@ const apiScan = [
                 fs.unlinkSync(req.file.path);
             }
 
-            res.status(500).json({name: "Scan Failed", prep: "The AI service was unable to identify this image."});
+            res.status(500);
+            res.json({name: "Scan Failed", prep: "The AI service was unable to identify this image."});
         }
     }
 ];

@@ -39,6 +39,139 @@
     display: none;
   }
 
+  /* ── PLANT DETAIL PANEL ── */
+  #detail-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+  #detail-panel.open { transform: translateX(0); }
+
+  #detail-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+  }
+  #detail-back {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #333;
+    margin-right: auto;
+    padding: 4px 0;
+  }
+  #detail-title {
+    font-weight: bold;
+    font-size: 1rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  #detail-photo {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    flex-shrink: 0;
+  }
+  #detail-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #detail-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  #detail-name { font-size: 1.4rem; font-weight: bold; }
+  #detail-sci  { font-size: 0.9rem; color: #666; font-style: italic; margin-top: 2px; }
+
+  #detail-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .detail-tag {
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: #eee;
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+  .tag-edible   { background: #d4edda; color: #155724; }
+  .tag-season   { background: #fff3cd; color: #856404; }
+  .tag-toxic    { background: #f8d7da; color: #721c24; }
+  .tag-unknown  { background: #eee;    color: #555; }
+
+  #detail-info-header {
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+  }
+  #detail-description {
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.6;
+  }
+  #detail-meta {
+    font-size: 0.8rem;
+    color: #999;
+  }
+  #detail-link {
+    font-size: 0.85rem;
+    color: #333;
+    text-decoration: underline;
+  }
+
+  /* ── NEARBY DRAWER ── */
+  #drawer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 950;
+    background: #fff;
+    border-top: 1px solid #ccc;
+    max-height: 60dvh;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  #drawer.open { transform: translateY(0); }
+  #drawer-header { padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  #drawer-close { background: none; border: none; font-size: 1rem; cursor: pointer; }
+  #drawer-list { overflow-y: auto; }
+  .drawer-item { padding: 10px 12px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; gap: 10px; align-items: center; }
+  .drawer-item:hover { background: #f5f5f5; }
+  .drawer-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 3px; flex-shrink: 0; }
+  .drawer-item-img-placeholder { width: 48px; height: 48px; background: #eee; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+  .drawer-item-info { flex: 1; }
+  .drawer-item-name { font-size: 0.9rem; font-weight: bold; }
+  .drawer-item-sci { font-size: 0.75rem; color: #666; font-style: italic; }
+  .drawer-item-date { font-size: 0.72rem; color: #999; margin-top: 2px; }
+
+  /* ── WELCOME / WALKTHROUGH ── */
   #welcome-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.5);
@@ -73,31 +206,6 @@
     font-size: 0.7rem; padding: 4px 8px; cursor: pointer;
     background: #fff; border: 1px solid #ccc; border-radius: 3px; display: none;
   }
-
-  #drawer {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    z-index: 950;
-    background: #fff;
-    border-top: 1px solid #ccc;
-    max-height: 60dvh;
-    display: flex; flex-direction: column;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-  }
-  #drawer.open { transform: translateY(0); }
-  #drawer-header { padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-  #drawer-close { background: none; border: none; font-size: 1rem; cursor: pointer; }
-  #drawer-list { overflow-y: auto; }
-  .drawer-item { padding: 10px 12px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; gap: 10px; align-items: center; }
-  .drawer-item:hover { background: #f5f5f5; }
-  .drawer-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 3px; flex-shrink: 0; }
-  .drawer-item-img-placeholder { width: 48px; height: 48px; background: #eee; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
-  .drawer-item-info { flex: 1; }
-  .drawer-item-name { font-size: 0.9rem; font-weight: bold; }
-  .drawer-item-sci { font-size: 0.75rem; color: #666; font-style: italic; }
-  .drawer-item-date { font-size: 0.72rem; color: #999; margin-top: 2px; }
-  #drawer-loading { padding: 16px; text-align: center; font-size: 0.85rem; color: #666; }
 </style>
 </head>
 <body>
@@ -115,15 +223,38 @@
 <button id="view-nearby-btn">View Plants Nearby</button>
 <button id="hint-toggle">Guide</button>
 
+<!-- Plant Detail Panel -->
+<div id="detail-panel">
+  <div id="detail-header">
+    <button id="detail-back">&gt; Back</button>
+    <span id="detail-title"></span>
+  </div>
+  <div id="detail-photo"><span id="detail-emoji">🌿</span></div>
+  <div id="detail-body">
+    <div>
+      <div id="detail-name"></div>
+      <div id="detail-sci"></div>
+    </div>
+    <div id="detail-tags"></div>
+    <div>
+      <div id="detail-info-header">INFORMATION:</div>
+      <div id="detail-description" style="margin-top:8px"></div>
+    </div>
+    <div id="detail-meta"></div>
+    <a id="detail-link" href="#" target="_blank">View full observation on iNaturalist →</a>
+  </div>
+</div>
+
+<!-- Nearby Drawer -->
 <div id="drawer">
   <div id="drawer-header">
     <strong>Nearby Plants</strong>
     <button id="drawer-close">✕</button>
   </div>
-  <div id="drawer-loading" style="display:none">Loading…</div>
   <div id="drawer-list"></div>
 </div>
 
+<!-- Welcome Modal -->
 <div id="welcome-overlay">
   <div id="welcome-modal">
     <h2>Welcome to BeWilder</h2>
@@ -153,9 +284,141 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let userCenter = [49.2827, -123.1207];
 map.setView(userCenter, 14);
-
 let allObservations = [];
 
+// ── EDIBILITY DATABASE ──
+// Keyed by iNaturalist taxon ID
+// Add more as needed: https://www.inaturalist.org/taxa/<name>
+const EDIBILITY = {
+  // Edible
+  47602:  'edible',   // Stinging Nettle
+  60218:  'edible',   // Wild Blackberry
+  76958:  'edible',   // Dandelion
+  53370:  'edible',   // Garlic Mustard
+  48701:  'edible',   // Chickweed
+  55813:  'edible',   // Lamb's Quarters
+  50148:  'edible',   // Purslane
+  47157:  'edible',   // Wood Sorrel
+  58796:  'edible',   // Elderberry
+  47229:  'edible',   // Wild Strawberry
+  49743:  'edible',   // Hawthorn
+  61438:  'edible',   // Cleavers / Goosegrass
+  47223:  'edible',   // Red Clover
+  50303:  'edible',   // Plantain (broadleaf)
+  48591:  'edible',   // Fireweed
+  48537:  'edible',   // Cattail
+  62410:  'edible',   // Cow Parsley
+  47727:  'edible',   // Wild Garlic
+  // Toxic
+  50171:  'toxic',    // Deadly Nightshade
+  77378:  'toxic',    // Poison Hemlock
+  47727:  'toxic',    // Giant Hogweed (causes burns)
+  48678:  'toxic',    // Foxglove
+  52580:  'toxic',    // Lily of the Valley
+  56057:  'toxic',    // Monkshood / Wolfsbane
+  49643:  'toxic',    // Poison Ivy
+  77107:  'toxic',    // Death Camas
+  48735:  'toxic',    // Lords and Ladies
+  62024:  'toxic',    // Black Nightshade
+  47727:  'toxic',    // Yew
+};
+
+function getEdibilityTag(obs, wikiText = '') {
+  const taxonId = obs.taxon?.id;
+
+  // Tier 1: check lookup table
+  if (taxonId && EDIBILITY[taxonId]) {
+    const e = EDIBILITY[taxonId];
+    if (e === 'edible') return { label: 'Edible',    cls: 'tag-edible' };
+    if (e === 'toxic')  return { label: 'Toxic',     cls: 'tag-toxic'  };
+  }
+
+  // Tier 2: scan wikipedia summary for keywords
+  const text = wikiText.toLowerCase();
+  const edibleKeywords = ['edible', 'eaten', 'food plant', 'forage', 'culinary', 'consumed', 'harvested for food'];
+  const toxicKeywords  = ['toxic', 'poisonous', 'poison', 'fatal', 'lethal', 'dangerous if ingested', 'harmful'];
+
+  if (toxicKeywords.some(k => text.includes(k)))  return { label: 'Toxic',            cls: 'tag-toxic'   };
+  if (edibleKeywords.some(k => text.includes(k))) return { label: 'Edible',           cls: 'tag-edible'  };
+  return                                                  { label: 'Edibility Unknown', cls: 'tag-unknown' };
+}
+
+function getSeasonTag() {
+  const month = new Date().getMonth(); // current month, 0-indexed
+  const season =
+    month >= 2 && month <= 4 ? 'Spring' :
+    month >= 5 && month <= 7 ? 'Summer (Peak Season)' :
+    month >= 8 && month <= 10 ? 'Autumn' : 'Winter';
+  return { label: season, cls: 'tag-season' };
+}
+
+// ── DETAIL PANEL ──
+const detailPanel = document.getElementById('detail-panel');
+
+async function openDetail(obs) {
+  const name    = obs.taxon?.preferred_common_name || obs.taxon?.name || 'Unknown Plant';
+  const sci     = obs.taxon?.name || '';
+  const date    = obs.observed_on || 'unknown date';
+  const photo   = obs.photos?.[0]?.url?.replace('square', 'medium') || null;
+  const url     = `https://www.inaturalist.org/observations/${obs.id}`;
+  const taxonId = obs.taxon?.id;
+
+  // Header
+  document.getElementById('detail-title').textContent = name;
+  document.getElementById('detail-name').textContent  = name;
+  document.getElementById('detail-sci').textContent   = sci;
+
+  // Photo
+  const photoEl = document.getElementById('detail-photo');
+  if (photo) {
+    photoEl.innerHTML = `<img src="${photo}" alt="${name}">`;
+  } else {
+    photoEl.innerHTML = `<span style="font-size:5rem">🌿</span>`;
+  }
+
+  // Tags
+  const tagsEl    = document.getElementById('detail-tags');
+  const edibility = getEdibilityTag(obs, '');
+  const season    = getSeasonTag();
+  tagsEl.innerHTML = `<span class="detail-tag ${edibility.cls}">${edibility.label}</span>`;
+  if (season) tagsEl.innerHTML += `<span class="detail-tag ${season.cls}">${season.label}</span>`;
+
+  document.getElementById('detail-description').textContent = 'Loading description…';
+  document.getElementById('detail-meta').textContent = `Spotted: ${date}`;
+  document.getElementById('detail-link').href = url;
+
+  detailPanel.classList.add('open');
+
+  // Fetch full taxon info for the wikipedia summary
+  if (taxonId) {
+    try {
+      const res  = await fetch(`https://api.inaturalist.org/v1/taxa/${taxonId}`);
+      const data = await res.json();
+      const wiki = data.results?.[0]?.wikipedia_summary;
+      // Strip any HTML tags that might come back in the summary
+      const clean = wiki ? wiki.replace(/<[^>]+>/g, '') : 'No description available for this species.';
+      document.getElementById('detail-description').textContent = clean;
+
+      // Re-check edibility from full taxon data too
+      const fullObs = { ...obs, taxon: { ...obs.taxon, wikipedia_summary: clean } };
+      const updatedEdibility = getEdibilityTag(fullObs, clean);
+      tagsEl.innerHTML = `<span class="detail-tag ${updatedEdibility.cls}">${updatedEdibility.label}</span>`;
+      if (season) tagsEl.innerHTML += `<span class="detail-tag ${season.cls}">${season.label}</span>`;
+
+    } catch (err) {
+      document.getElementById('detail-description').textContent = 'Could not load description.';
+      console.error('Taxon fetch error:', err);
+    }
+  } else {
+    document.getElementById('detail-description').textContent = 'No description available.';
+  }
+}
+
+document.getElementById('detail-back').addEventListener('click', () => {
+  detailPanel.classList.remove('open');
+});
+
+// ── LOAD PLANTS ──
 async function loadPlants(lat, lng) {
   const loading     = document.getElementById('loading');
   const errorBanner = document.getElementById('error-banner');
@@ -179,13 +442,21 @@ async function loadPlants(lat, lng) {
     const data = await res.json();
 
     if (!data.results.length) {
-      showError('No plant sightings found nearby. Try moving the map to explore a different area.');
+      showError('No plant sightings found nearby. Try moving the map.');
       loading.style.display = 'none';
       return;
     }
 
-    allObservations = data.results;
-    data.results.forEach(obs => addPin(obs));
+    allObservations = data.results.filter(obs => {
+      const e = getEdibilityTag(obs, '');
+      return e.cls !== 'tag-unknown';
+    });
+    if (!allObservations.length) {
+      showError('No known edible or toxic plants found nearby. Try moving the map.');
+      loading.style.display = 'none';
+      return;
+    }
+    allObservations.forEach(obs => addPin(obs));
     loading.style.display = 'none';
 
   } catch (err) {
@@ -195,26 +466,34 @@ async function loadPlants(lat, lng) {
   }
 }
 
+// Store markers keyed by obs id so we can open their popups
+const markerMap = {};
+
 function addPin(obs) {
   if (!obs.location) return;
   const [lat, lng] = obs.location.split(',').map(Number);
-
   const name  = obs.taxon?.preferred_common_name || obs.taxon?.name || 'Unknown Plant';
   const sci   = obs.taxon?.name || '';
   const date  = obs.observed_on || 'unknown date';
   const photo = obs.photos?.[0]?.url?.replace('square', 'small') || null;
-  const url   = `https://www.inaturalist.org/observations/${obs.id}`;
 
-  const popup = `
+  const popup = L.popup({ maxWidth: 220 }).setContent(`
     ${photo ? `<img src="${photo}" width="160" style="display:block;margin-bottom:6px;border-radius:3px">` : ''}
     <b>${name}</b><br>
     <i style="font-size:0.8em">${sci}</i><br>
     <small>Spotted: ${date}</small><br>
+    <button onclick="window._openDetail(${obs.id})" style="margin-top:8px;padding:5px 10px;cursor:pointer;width:100%">More Details</button>
+  `);
 
-  `;
-
-  L.marker([lat, lng]).addTo(map).bindPopup(popup);
+  const marker = L.marker([lat, lng]).addTo(map).bindPopup(popup);
+  markerMap[obs.id] = marker;
 }
+
+// Global so the inline onclick can reach it
+window._openDetail = (id) => {
+  const obs = allObservations.find(o => o.id === id);
+  if (obs) openDetail(obs);
+};
 
 function showError(msg) {
   const banner = document.getElementById('error-banner');
@@ -222,6 +501,7 @@ function showError(msg) {
   banner.style.display = 'block';
 }
 
+// ── NEARBY DRAWER ──
 const drawer = document.getElementById('drawer');
 
 function openDrawer() {
@@ -230,7 +510,7 @@ function openDrawer() {
   list.innerHTML = '';
 
   if (!allObservations.length) {
-    list.innerHTML = '<div style="padding:16px;font-size:0.85rem;color:#666">No plants loaded yet. Wait for the map to finish loading.</div>';
+    list.innerHTML = '<div style="padding:16px;font-size:0.85rem;color:#666">No plants loaded yet.</div>';
     return;
   }
 
@@ -239,7 +519,6 @@ function openDrawer() {
     const sci   = obs.taxon?.name || '';
     const date  = obs.observed_on || 'unknown date';
     const photo = obs.photos?.[0]?.url || null;
-    const url   = `https://www.inaturalist.org/observations/${obs.id}`;
 
     const item = document.createElement('div');
     item.className = 'drawer-item';
@@ -254,10 +533,16 @@ function openDrawer() {
       </div>
     `;
     item.addEventListener('click', () => {
-      if (!obs.location) return;
-      const [lat, lng] = obs.location.split(',').map(Number);
       drawer.classList.remove('open');
-      map.flyTo([lat, lng], 17, { duration: 1 });
+      if (obs.location) {
+        const [lat, lng] = obs.location.split(',').map(Number);
+        map.flyTo([lat, lng], 17, { duration: 1 });
+        // Open the marker popup after the fly animation
+        setTimeout(() => {
+          const marker = markerMap[obs.id];
+          if (marker) marker.openPopup();
+        }, 1200);
+      }
     });
     list.appendChild(item);
   });
@@ -266,19 +551,14 @@ function openDrawer() {
 document.getElementById('view-nearby-btn').addEventListener('click', openDrawer);
 document.getElementById('drawer-close').addEventListener('click', () => drawer.classList.remove('open'));
 
+// ── GEOLOCATION ──
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(pos => {
     userCenter = [pos.coords.latitude, pos.coords.longitude];
     map.setView(userCenter, 15);
-
     L.circleMarker(userCenter, {
-      radius: 10,
-      fillColor: '#4285F4',
-      fillOpacity: 1,
-      color: '#fff',
-      weight: 3,
+      radius: 10, fillColor: '#4285F4', fillOpacity: 1, color: '#fff', weight: 3,
     }).addTo(map).bindPopup('📍 You are here');
-
     loadPlants(...userCenter);
   }, () => {
     showError('Location unavailable. Showing plants near Vancouver.');
@@ -294,6 +574,7 @@ map.on('moveend', () => {
   loadPlants(c.lat, c.lng);
 });
 
+// ── WALKTHROUGH ──
 const steps = [
   { text: "These pins show real plant sightings near you. Tap one to learn more." },
   { text: "Use 'Scan Plant' to identify a plant using your camera." },
